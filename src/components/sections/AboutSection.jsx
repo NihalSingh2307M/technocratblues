@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ABOUT_VALUES } from '../../assets';
+import { ABOUT_VALUES, CAPABILITY_DETAILS } from '../../assets';
 import CapabilityCard from './CapabilityCard';
 gsap.registerPlugin(ScrollTrigger);
 
-const WHAT_WE_OFFER = [
-    { emoji: '📱', title: 'Application Development', desc: 'Modern Web & Mobile Application Development.' },
-    { emoji: '⚙️', title: 'Product Engineering', desc: 'Digital Product Engineering & Architecture.' },
-    { emoji: '📈', title: 'Scalable Tech', desc: 'Delivering scalable technology consulting services.' },
-    { emoji: '🤝', title: 'Client-Centric', desc: 'Reliable Delivery with Client-Centric Approach.' },
-];
+// Derived from CAPABILITY_DETAILS — single source of truth, no duplication
+const WHAT_WE_OFFER = Object.entries(CAPABILITY_DETAILS).map(([title, { emoji, tagline }]) => ({
+    title,
+    emoji,
+    desc: tagline,
+}));
 
 export default function AboutSection() {
     const sectionRef = useRef(null);
@@ -80,19 +80,19 @@ export default function AboutSection() {
                         </h2>
 
                         <p className="section-subtitle mb-6">
-                            Building scalable digital experiences with <strong>innovation</strong>,{' '}
-                            <strong>reliability</strong>, and modern technology solutions.
+                            We build and ship software products that solve real problems —
+                            fast, focused, and made to grow.
                         </p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
                             <p className="text-sm text-[color:var(--color-ink-soft)] leading-relaxed">
-                                We are a technology consulting company focused on turning ideas
-                                into robust digital solutions. Our work brings together software
-                                engineering, product architecture, and pragmatic delivery.
+                                We are a product-focused tech startup turning ambitious ideas
+                                into software people actually use. From architecture to deployment,
+                                we own the full stack.
                             </p>
                             <p className="text-sm text-[color:var(--color-ink-soft)] leading-relaxed">
-                                Driven by motivation and commitment, we work closely with every
-                                client to create technology that delivers meaningful, lasting value.
+                                We ship fast, iterate with purpose, and stay close to every
+                                client — because great software is built on trust as much as code.
                             </p>
                         </div>
                     </div>

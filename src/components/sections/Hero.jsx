@@ -9,7 +9,7 @@ const CYCLING_WORDS = ['forward.', 'faster.', 'smarter.', 'at scale.', 'with cla
 
 const STAT_CONFIG = [
   {
-    value: 'Scalable', label: 'by design',
+    value: 'Innovation-Driven', label: 'Focused on the future',
     renderIcon: () => (
       <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
@@ -27,7 +27,7 @@ const STAT_CONFIG = [
     color: '#5B8DEF', glow: 'rgba(91,141,239,0.18)', bar: 1.0,
   },
   {
-    value: 'Client-first', label: 'at every step',
+    value: 'Agile', label: 'Fast,adaptive,efficient',
     renderIcon: () => (
       <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />

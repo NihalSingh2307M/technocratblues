@@ -93,9 +93,9 @@ export const PROCESS_STEPS = [
 
 // ── About ─────────────────────────────────────────────────────────────────────
 export const ABOUT_VALUES = [
-  { label: 'Innovation',   desc: 'Modern stacks and forward-thinking architecture.' },
-  { label: 'Reliability',  desc: 'Consistent delivery with zero compromise on quality.' },
-  { label: 'Scalability',  desc: 'Systems that grow with your business, from day one.' },
+  { label: 'Product Mindset',  desc: 'We think in outcomes, not just outputs — every line of code serves a purpose.' },
+  { label: 'Ownership',        desc: 'We treat your product like our own, with full accountability end to end.' },
+  { label: 'Speed & Craft',    desc: 'We move fast without cutting corners — quality and velocity, together.' },
 ];
 
 // ── Contact / Google Form ─────────────────────────────────────────────────────
