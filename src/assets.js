@@ -38,19 +38,19 @@ export const NAV_LINKS = [
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
 export const HERO_STATS = [
-  { value: '150+', label: 'Projects Shipped' },
-  { value: '98%',  label: 'Client Satisfaction' },
-  { value: '8+',   label: 'Years Experience' },
+  { value: 'Scalable',      label: 'by design' },
+  { value: 'Reliable',      label: 'by default' },
+  { value: 'Client-first',  label: 'at every step' },
 ];
 
 export const HERO_BADGES = ['React', 'Node.js', 'Cloud', 'AI/ML', 'DevOps'];
 
 export const HERO_HEADLINE = {
-  line1: 'Building Scalable',
-  line2: 'Digital Products',
-  line3: '& Experiences.',
+  line1: 'Technology that',
+  line2: 'moves business',
+  line3: 'forward.',
   description:
-    'We transform ideas into robust software solutions through modern engineering, architecture, and technology consulting.',
+    'We turn ambitious ideas into dependable digital products, engineered to scale and built to endure.',
 };
 
 // ── Services ─────────────────────────────────────────────────────────────────

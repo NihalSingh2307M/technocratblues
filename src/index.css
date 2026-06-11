@@ -1,9 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
 @import "tailwindcss";
 
-/* ─────────────────────────────────────────────
-   DESIGN TOKENS  (edit here to retheme everything)
-   ───────────────────────────────────────────── */
+
 :root {
   /* ── Colors ── */
   --color-brand:          #7078D0;
@@ -11,6 +9,7 @@
   --color-brand-light:    rgba(112, 120, 208, 0.08);
   --color-brand-glow:     rgba(112, 120, 208, 0.20);
 
+  /* ── Ink: unchanged ── */
   --color-ink:            #111111;
   --color-ink-soft:       #444444;
   --color-ink-muted:      #555555;
@@ -20,16 +19,18 @@
   --color-ink-pale:       #aaaaaa;
   --color-ink-dim:        #cccccc;
 
-  --color-surface:        #FAFAF8;
+  /* ── Surfaces: lavender-grey tint — calm, not stark white ── */
+  --color-surface:        #f5f5fb;   /* soft lavender-white — easy on eyes, matches brand */
   --color-surface-white:  #ffffff;
-  --color-surface-dark:   #07070f;
-  --color-surface-darker: #0d0d0d;
-  --color-surface-card:   #111111;
+  --color-surface-raised: #f0f0f8;
+  --color-surface-dark:   #1e1d2e;
+  --color-surface-darker: #16151f;
+  --color-surface-card:   #2a2940;
 
   --color-border:         rgba(0, 0, 0, 0.07);
-  --color-border-light:   #f3f4f6;   /* gray-100 */
-  --color-border-medium:  #e5e7eb;   /* gray-200 */
-  --color-border-blue:    rgba(112, 120, 208, 0.30);   /* blue-100ish */
+  --color-border-light:   #f3f4f6;
+  --color-border-medium:  #e5e7eb;
+  --color-border-blue:    rgba(112, 120, 208, 0.30);
 
   /* ── Blue tints (for bg chips, tags, form rings) ── */
   --color-blue-50:        #f0f0fb;
@@ -559,6 +560,7 @@
   /* Surface helpers */
   .bg-surface        { background-color: var(--color-surface); }
   .bg-surface-white  { background-color: var(--color-surface-white); }
+  .bg-surface-raised { background-color: var(--color-surface-raised); }
   .bg-surface-dark   { background-color: var(--color-surface-dark); }
   .bg-surface-darker { background-color: var(--color-surface-darker); }
   /* Typography helpers */

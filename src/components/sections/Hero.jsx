@@ -1,15 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { HERO_BADGES, HERO_HEADLINE, BRAND } from '../../assets';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { HERO_HEADLINE, HERO_STATS, LOGO } from '../../assets';
+gsap.registerPlugin(ScrollTrigger);
 
-const ROTATING_WORDS = [
-  'Experiences',
-  'Platforms',
-  'Solutions',
-  'Products',
-  'Systems',
-  'Ventures',
-];
+function scrollToSection(id) {
+    ScrollTrigger.refresh();
+    const el = document.getElementById(id);
+    if (!el) return;
+    const pinSpacer = el.closest('[data-scrolltrigger-pin-spacer]') ?? el.parentElement?.closest('[data-scrolltrigger-pin-spacer]');
+    const target = pinSpacer ?? el;
+    const top = target.getBoundingClientRect().top + window.scrollY;
+    const isPinned = !!pinSpacer;
+    window.scrollTo({ top, behavior: isPinned ? 'instant' : 'smooth' });
+}
 
 export default function Hero() {
   const line1Ref = useRef(null);
@@ -18,24 +22,6 @@ export default function Hero() {
   const paraRef  = useRef(null);
   const rightRef = useRef(null);
   const tagRef   = useRef(null);
-  const wordRef  = useRef(null);
-  const [wordIdx, setWordIdx] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      gsap.to(wordRef.current, {
-        yPercent: -120, opacity: 0, duration: 0.4, ease: 'power3.in',
-        onComplete: () => {
-          setWordIdx(i => (i + 1) % ROTATING_WORDS.length);
-          gsap.fromTo(wordRef.current,
-            { yPercent: 120, opacity: 0 },
-            { yPercent: 0,   opacity: 1, duration: 0.5, ease: 'expo.out' }
-          );
-        },
-      });
-    }, 2400);
-    return () => clearInterval(id);
-  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -87,7 +73,7 @@ export default function Hero() {
             >
               <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
               <span className="text-xs font-semibold text-brand tracking-wide">
-                {BRAND.tagline}
+                Digital Product Engineering
               </span>
             </div>
 
@@ -125,31 +111,33 @@ export default function Hero() {
                   className="font-semibold leading-[1.15]
                              text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]"
                 >
-                  &amp;{' '}
-                  <span style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom' }}>
-                    <span ref={wordRef} style={{ display: 'inline-block' }}>
-                      {ROTATING_WORDS[wordIdx]}
-                    </span>
-                  </span>
-                  .
+                  {HERO_HEADLINE.line3}
                 </h1>
               </div>
             </div>
 
             {/* Description */}
-            <div ref={paraRef} style={{ opacity: 0 }} className="mb-4">
+            <div ref={paraRef} style={{ opacity: 0 }} className="mb-8">
               <p
                 className="text-[#555] text-base sm:text-lg leading-relaxed max-w-120"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
                 {HERO_HEADLINE.description}
               </p>
-              {/* <p className="mt-3 text-sm text-[#888]">
-                {BRAND.founder.name},{' '}
-                <em style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 600, color: '#555' }}>
-                  {BRAND.founder.title}
-                </em>
-              </p> */}
+
+              {/* CTA row */}
+              <div className="flex flex-wrap items-center gap-4 mt-8">
+                <button
+                  onClick={() => scrollToSection('services')}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#444] hover:text-brand transition-colors"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  Explore our expertise
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
 
           </div>
@@ -160,54 +148,40 @@ export default function Hero() {
             style={{ opacity: 0 }}
             className="flex items-center justify-center lg:justify-end"
           >
-            <div className="relative w-full max-w-115" style={{ padding: '44px 44px 52px 20px' }}>
-
-              {/* Main card */}
-              <div className="hero-float bg-surface-white rounded-3xl shadow-2xl border border-(--color-border-light)] p-10 sm:p-12">
-                <div className="flex-center w-28 h-28 mx-auto mb-7 bg-brand rounded-3xl shadow-xl">
-                  <svg viewBox="0 0 90 90" fill="none" className="w-16 h-16">
-                    <path d="M8 22h26M21 22v46" stroke="white" strokeWidth="6" strokeLinecap="round" />
-                    <path d="M42 22h18a11 11 0 0 1 0 22H42V22z" stroke="white" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                    <path d="M42 44h19a12 12 0 0 1 0 24H42V44z" stroke="white" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                  </svg>
-                </div>
-
-                <p
-                  className="text-center font-black text-[#111] text-2xl tracking-tight mb-1.5 font-display"
-                >
-                  {BRAND.nameColored.base}<span className="text-brand">{BRAND.nameColored.accent}</span>
-                </p>
-                <p className="text-center text-[11px] tracking-[0.22em] uppercase text-[#aaa] mb-7">
-                  {BRAND.tagline}
-                </p>
-
-                <div className="flex flex-wrap justify-center gap-2.5">
-                  {HERO_BADGES.map((badge) => (
-                    <span
-                      key={badge}
-                      className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-brand border border-e-blue-100"
-                    >
-                      {badge}
-                    </span>
-                  ))}
-                </div>
+            <div className="relative w-full max-w-sm">
+              <div className="hero-float bg-surface-white rounded-3xl shadow-2xl border border-[#f3f4f6] p-6 sm:p-8 flex items-center justify-center aspect-square">
+                <img
+                  src={LOGO.src}
+                  alt={LOGO.alt}
+                  className="w-full h-full object-contain"
+                />
               </div>
 
               {/* Floating code card */}
-              <div className="absolute top-0 right-0 bg-surface-dark rounded-2xl shadow-xl px-4 py-3">
+              <div className="absolute -top-5 right-4 bg-surface-card rounded-2xl shadow-xl px-4 py-3 z-10">
                 <p className="text-xs font-mono text-brand whitespace-nowrap">npm run deploy</p>
                 <p className="text-[10px] font-mono text-green-400 mt-1">✓ Build successful</p>
-              </div>
-
-              {/* Dot grid */}
-              <div className="absolute -z-10 -bottom-8 -right-8 grid grid-cols-8 gap-2 opacity-[0.12]">
-                {Array.from({ length: 40 }).map((_, i) => (
-                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-brand" />
-                ))}
               </div>
             </div>
           </div>
 
+        </div>
+      </div>
+
+      {/* ── Stats strip ── */}
+      <div className="absolute bottom-0 left-0 right-0 border-t border-[#e8eaf0]/60">
+        <div className="container-custom py-4 flex items-center gap-8 sm:gap-12">
+          {HERO_STATS.map(({ value, label }) => (
+            <div key={value} className="flex flex-col">
+              <span
+                className="text-sm font-black text-[#111]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                {value}
+              </span>
+              <span className="text-xs text-[#888]">{label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

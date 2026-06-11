@@ -2,104 +2,93 @@ import { useRef } from 'react';
 import { SERVICES } from '../../assets';
 import useServiceAnimation from '../../hooks/useServiceAnimation';
 
+/*
+  Layout: full-width alternating rows — each service takes the entire width.
+  Even rows: [CARD left] [TEXT right]
+  Odd  rows: [TEXT left] [CARD right]
+
+  No dark background — inherits site background.
+  Accent palette: periwinkle family (#7078D0 primary, #7888D0 secondary).
+*/
+
 const ACCENTS = [
-    { border: 'rgba(26,71,232,0.25)',  glow: 'rgba(26,71,232,0.09)',  hex: '#4d78ff',  line: 'rgba(26,71,232,0.45)'  },
-    { border: 'rgba(147,51,234,0.25)', glow: 'rgba(147,51,234,0.09)', hex: '#a855f7',  line: 'rgba(147,51,234,0.45)' },
-    { border: 'rgba(249,115,22,0.25)', glow: 'rgba(249,115,22,0.09)', hex: '#fb923c',  line: 'rgba(249,115,22,0.45)' },
-    { border: 'rgba(22,163,74,0.25)',  glow: 'rgba(22,163,74,0.09)',  hex: '#4ade80',  line: 'rgba(22,163,74,0.45)'  },
-    { border: 'rgba(239,68,68,0.25)',  glow: 'rgba(239,68,68,0.09)',  hex: '#f87171',  line: 'rgba(239,68,68,0.45)'  },
-    { border: 'rgba(99,102,241,0.25)', glow: 'rgba(99,102,241,0.09)', hex: '#818cf8',  line: 'rgba(99,102,241,0.45)' },
+    { border: 'rgba(112,120,208,0.22)', glow: 'rgba(112,120,208,0.08)', hex: '#7078D0', soft: 'rgba(112,120,208,0.06)', tag: 'rgba(112,120,208,0.12)' },
+    { border: 'rgba(120,136,208,0.22)', glow: 'rgba(120,136,208,0.08)', hex: '#7888D0', soft: 'rgba(120,136,208,0.06)', tag: 'rgba(120,136,208,0.12)' },
+    { border: 'rgba(140,110,210,0.22)', glow: 'rgba(140,110,210,0.08)', hex: '#9B6FD8', soft: 'rgba(140,110,210,0.06)', tag: 'rgba(140,110,210,0.12)' },
+    { border: 'rgba(90,140,200,0.22)',  glow: 'rgba(90,140,200,0.08)',  hex: '#5A8CC8', soft: 'rgba(90,140,200,0.06)',  tag: 'rgba(90,140,200,0.12)'  },
+    { border: 'rgba(160,120,200,0.22)', glow: 'rgba(160,120,200,0.08)', hex: '#A078C8', soft: 'rgba(160,120,200,0.06)', tag: 'rgba(160,120,200,0.12)' },
+    { border: 'rgba(100,130,220,0.22)', glow: 'rgba(100,130,220,0.08)', hex: '#6482DC', soft: 'rgba(100,130,220,0.06)', tag: 'rgba(100,130,220,0.12)' },
 ];
 
 const ICONS = {
     'Product Engineering': (
-        <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     ),
     'UI/UX Design Systems': (
-        <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
-            <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
-            <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
-            <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
-            <path d="M6.5 14v7M3 17.5h7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.7" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.7" />
+            <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.7" />
+            <path d="M6.5 14v7M3 17.5h7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
         </svg>
     ),
     'Cloud Infrastructure': (
-        <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
             <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"
-                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     ),
     'AI & ML Integration': (
-        <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
-            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.7" />
             <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"
-                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
         </svg>
     ),
     'Security & Compliance': (
-        <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     ),
     'Tech Consulting': (
-        <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     ),
 };
 
 export default function ServiceSection() {
     const sectionRef = useRef(null);
-    const stageRef   = useRef(null);
-    const pairsRef   = useRef([]);   // each pair wrapper (heading + card)
+    const rowsRef    = useRef([]);
 
-    useServiceAnimation({ sectionRef, stageRef, pairsRef, cardCount: SERVICES.length });
+    useServiceAnimation({ sectionRef, rowsRef });
 
     return (
         <section
             id="services"
             ref={sectionRef}
             style={{
-                background   : '#07070f',
-                position     : 'relative',
+                background: 'transparent',
+                position  : 'relative',
+                padding   : 'clamp(72px, 8vw, 112px) 0',
+                overflow  : 'hidden',
             }}
         >
-            {/* Ambient bg */}
-            <div aria-hidden style={{
-                position: 'absolute', inset: 0, pointerEvents: 'none',
-                background: [
-                    'radial-gradient(ellipse 90% 55% at 50% 110%, rgba(26,71,232,0.16) 0%, transparent 55%)',
-                    'radial-gradient(ellipse 45% 35% at 8%  20%,  rgba(99,102,241,0.05) 0%, transparent 50%)',
-                    'radial-gradient(ellipse 38% 28% at 92% 15%,  rgba(147,51,234,0.05) 0%, transparent 50%)',
-                ].join(', '),
-            }} />
-
-            {/* Inner flex column — this is what gets pinned by ScrollTrigger */}
-            <div ref={stageRef} style={{
-                display      : 'flex',
-                flexDirection: 'column',
-                minHeight    : '100vh',
-                overflow     : 'hidden',
-                position     : 'relative',
-            }}>
-
-            {/* ── Section header (always visible at top) ── */}
+            {/* ── Section header ── */}
             <div style={{
-                flexShrink   : 0,
-                position     : 'relative', zIndex: 10,
-                padding      : 'clamp(28px, 4vw, 44px) clamp(24px, 5vw, 64px) 0',
+                padding      : '0 clamp(24px, 6vw, 96px)',
+                marginBottom : 'clamp(56px, 7vw, 88px)',
                 display      : 'flex',
                 alignItems   : 'flex-end',
                 justifyContent: 'space-between',
                 flexWrap     : 'wrap',
-                gap          : 16,
+                gap          : 24,
             }}>
-                {/* Left: eyebrow + big heading */}
                 <div>
                     <p style={{
                         margin       : '0 0 14px',
@@ -107,14 +96,14 @@ export default function ServiceSection() {
                         fontWeight   : 700,
                         letterSpacing: '0.16em',
                         textTransform: 'uppercase',
-                        color        : 'rgba(160,180,255,0.65)',
+                        color        : '#7078D0',
                         fontFamily   : "'DM Sans', sans-serif",
                         display      : 'flex',
                         alignItems   : 'center',
                         gap          : 10,
                     }}>
-                        <span style={{ display:'inline-block', width:24, height:1, background:'rgba(100,140,255,0.4)' }} />
-                        Our Services
+                        <span style={{ display:'inline-block', width:24, height:1.5, background:'#7078D0', borderRadius:2, opacity:0.5 }} />
+                        What We Do
                     </p>
                     <h2 style={{
                         margin       : 0,
@@ -122,239 +111,202 @@ export default function ServiceSection() {
                         fontWeight   : 900,
                         lineHeight   : 1.06,
                         letterSpacing: '-0.03em',
-                        color        : '#ececf4',
+                        color        : 'var(--color-ink)',
                     }}>
-                        <span style={{ display:'block', fontSize:'clamp(1.9rem, 4vw, 3.8rem)', color: '#ececf4' }}>
-                            What We
+                        <span style={{ display:'block', fontSize:'clamp(2rem, 4vw, 3.6rem)' }}>
+                            Engineering clarity
                         </span>
-                        <span style={{
-                            display      : 'block',
-                            fontSize     : 'clamp(1.9rem, 4vw, 3.8rem)',
-                            color        : '#ffffff',
-                            opacity      : 0.92,
-                        }}>
-                            Build &amp; Deliver.
+                        <span style={{ display:'block', fontSize:'clamp(2rem, 4vw, 3.6rem)' }}>
+                            into every{' '}
+                            <span style={{ color: '#7888D0' }}>solution.</span>
                         </span>
                     </h2>
                 </div>
 
-                {/* Right: sub-copy */}
                 <p style={{
                     margin    : 0,
                     maxWidth  : 320,
-                    fontSize  : 'clamp(0.8rem, 1.2vw, 0.92rem)',
-                    lineHeight: 1.76,
-                    color     : 'rgba(200,200,225,0.55)',
+                    fontSize  : 'clamp(0.84rem, 1.2vw, 0.94rem)',
+                    lineHeight: 1.8,
+                    color     : 'var(--color-ink-subtle)',
                     fontFamily: "'DM Sans', sans-serif",
                     paddingBottom: 6,
                 }}>
-                    From idea to production — engineering excellence across the full stack, on time and at scale.
+                    From first sketch to production scale, we help teams build smarter,
+                    move faster, and deliver with confidence.
                 </p>
             </div>
 
-            {/* ── Stage: all pairs stacked absolutely ── */}
-            <div
-                style={{ position:'relative', flex:1, overflow:'visible', zIndex:1 }}
-            >
-                {SERVICES.map(({ title, desc, tags }, i) => {
-                    const a      = ACCENTS[i % ACCENTS.length];
-                    const isEven = i % 2 === 0; // even → heading left, card right
+            {/* ── Alternating rows ── */}
+            {SERVICES.map(({ title, desc, tags }, i) => {
+                const a      = ACCENTS[i % ACCENTS.length];
+                const isEven = i % 2 === 0;
+                // even: card LEFT, text RIGHT | odd: card RIGHT, text LEFT
+                const cardOrder = isEven ? 0 : 1;
+                const textOrder = isEven ? 1 : 0;
 
-                    return (
-                        <div
-                            key={title}
-                            ref={el => { pairsRef.current[i] = el; }}
-                            style={{
-                                position      : 'absolute',
-                                inset         : 0,
-                                display       : 'flex',
-                                alignItems    : 'center',
-                                justifyContent: 'center',
-                                gap           : 'clamp(24px, 4vw, 64px)',
-                                padding       : '0 clamp(24px, 5vw, 64px)',
-                                opacity       : 0,
-                                pointerEvents : 'none',
-                                willChange    : 'transform, opacity, filter',
-                                /* mobile: stack vertically */
-                                flexWrap      : 'wrap',
-                            }}
-                        >
-                            {/* ── Heading block ── */}
-                            <div style={{
-                                flex     : '1 1 280px',
-                                minWidth : 0,
-                                order    : isEven ? 0 : 1,
-                                textAlign: isEven ? 'left' : 'right',
+                return (
+                    <div
+                        key={title}
+                        ref={el => { rowsRef.current[i] = el; }}
+                        style={{
+                            display      : 'flex',
+                            alignItems   : 'center',
+                            gap          : 0,
+                            minHeight    : 'clamp(280px, 28vw, 400px)',
+                            borderTop    : `1px solid var(--color-border-light)`,
+                            overflow     : 'hidden',
+                        }}
+                    >
+                        {/* ── Card side ── */}
+                        <div style={{
+                            order     : cardOrder,
+                            flex      : '0 0 45%',
+                            alignSelf : 'stretch',
+                            position  : 'relative',
+                            background: a.soft,
+                            display   : 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding   : 'clamp(32px, 4vw, 56px)',
+                            overflow  : 'hidden',
+                        }}>
+                            {/* subtle corner glow */}
+                            <div aria-hidden style={{
+                                position     : 'absolute',
+                                inset        : 0,
+                                background   : isEven
+                                    ? `radial-gradient(ellipse 70% 60% at 0% 50%, ${a.glow} 0%, transparent 65%)`
+                                    : `radial-gradient(ellipse 70% 60% at 100% 50%, ${a.glow} 0%, transparent 65%)`,
+                                pointerEvents: 'none',
+                            }} />
+
+                            {/* ghost number */}
+                            <div aria-hidden style={{
+                                position     : 'absolute',
+                                right        : isEven ? 20 : 'auto',
+                                left         : isEven ? 'auto' : 20,
+                                bottom       : 12,
+                                fontSize     : 'clamp(80px, 10vw, 140px)',
+                                fontWeight   : 900,
+                                fontFamily   : "'Syne', sans-serif",
+                                color        : `${a.hex}0d`,
+                                lineHeight   : 1,
+                                userSelect   : 'none',
+                                pointerEvents: 'none',
                             }}>
-                                {/* index line */}
-                                <p style={{
-                                    margin         : '0 0 12px',
-                                    fontSize       : 11,
-                                    fontWeight     : 600,
-                                    letterSpacing  : '0.16em',
-                                    textTransform  : 'uppercase',
-                                    color          : a.hex,
-                                    opacity        : 0.75,
-                                    fontFamily     : "'DM Sans', sans-serif",
-                                    display        : 'flex',
-                                    alignItems     : 'center',
-                                    gap            : 8,
-                                    justifyContent : isEven ? 'flex-start' : 'flex-end',
-                                }}>
-                                    {!isEven && <span style={{ display:'inline-block', width:22, height:1, background: a.line }} />}
-                                    0{i + 1}
-                                    {isEven  && <span style={{ display:'inline-block', width:22, height:1, background: a.line }} />}
-                                </p>
-
-                                <h3 style={{
-                                    margin       : '0 0 14px',
-                                    fontFamily   : "'Syne', sans-serif",
-                                    fontWeight   : 800,
-                                    fontSize     : 'clamp(1.6rem, 3.2vw, 2.8rem)',
-                                    lineHeight   : 1.08,
-                                    letterSpacing: '-0.025em',
-                                    color        : '#ececf4',
-                                }}>
-                                    {title}
-                                </h3>
-
-                                <p style={{
-                                    margin     : '0 0 18px',
-                                    fontSize   : 'clamp(0.84rem, 1.2vw, 0.94rem)',
-                                    lineHeight : 1.78,
-                                    color      : 'rgba(200,200,225,0.42)',
-                                    fontFamily : "'DM Sans', sans-serif",
-                                    maxWidth   : 360,
-                                    marginLeft : isEven ? 0 : 'auto',
-                                }}>
-                                    {desc}
-                                </p>
-
-                                <div style={{
-                                    display       : 'flex',
-                                    flexWrap      : 'wrap',
-                                    gap           : 6,
-                                    justifyContent: isEven ? 'flex-start' : 'flex-end',
-                                }}>
-                                    {tags.map(tag => (
-                                        <span key={tag} style={{
-                                            padding      : '4px 10px',
-                                            borderRadius : 4,
-                                            fontSize     : 10,
-                                            fontWeight   : 600,
-                                            letterSpacing: '0.04em',
-                                            background   : 'rgba(255,255,255,0.03)',
-                                            border       : `1px solid ${a.border}`,
-                                            color        : `${a.hex}99`,
-                                            fontFamily   : "'DM Sans', sans-serif",
-                                        }}>
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
+                                0{i + 1}
                             </div>
 
-                            {/* ── Card block ── */}
-                            <div style={{
-                                flex    : '0 0 auto',
-                                width   : 'clamp(260px, 36vw, 400px)',
-                                maxWidth: '100%',
-                                order   : isEven ? 1 : 0,
-                            }}>
+                            {/* icon + number label */}
+                            <div style={{ position:'relative', zIndex:1, textAlign:'center' }}>
                                 <div style={{
-                                    background          : 'rgba(255,255,255,0.028)',
-                                    backdropFilter      : 'blur(28px)',
-                                    WebkitBackdropFilter: 'blur(28px)',
-                                    border              : `1px solid ${a.border}`,
-                                    borderRadius        : 24,
-                                    padding             : 'clamp(22px, 3vw, 36px)',
-                                    position            : 'relative',
-                                    overflow            : 'hidden',
-                                    boxShadow           : [
-                                        '0 28px 72px rgba(0,0,0,0.55)',
-                                        '0 8px 24px rgba(0,0,0,0.3)',
-                                        `0 0 80px ${a.glow}`,
-                                    ].join(', '),
+                                    display       : 'inline-flex',
+                                    alignItems    : 'center',
+                                    justifyContent: 'center',
+                                    width         : 72,
+                                    height        : 72,
+                                    borderRadius  : 20,
+                                    background    : 'var(--color-surface-white)',
+                                    border        : `1px solid ${a.border}`,
+                                    color         : a.hex,
+                                    boxShadow     : `0 4px 24px ${a.glow}, 0 1px 4px rgba(0,0,0,0.06)`,
+                                    marginBottom  : 16,
                                 }}>
-                                    {/* inner glow */}
-                                    <div aria-hidden style={{
-                                        position     : 'absolute', inset: 0, borderRadius: 24,
-                                        background   : `radial-gradient(ellipse 72% 52% at ${isEven ? '0%' : '100%'} 0%, ${a.glow} 0%, transparent 65%)`,
-                                        pointerEvents: 'none',
-                                    }} />
-
-                                    {/* icon */}
-                                    <div style={{
-                                        display        : 'inline-flex',
-                                        alignItems     : 'center',
-                                        justifyContent : 'center',
-                                        width          : 48, height: 48,
-                                        borderRadius   : 14,
-                                        marginBottom   : 18,
-                                        background     : 'rgba(255,255,255,0.04)',
-                                        border         : `1px solid ${a.border}`,
-                                        color          : a.hex,
-                                        boxShadow      : `0 0 24px ${a.glow}`,
-                                    }}>
-                                        {ICONS[title]}
-                                    </div>
-
-                                    {/* ghost number watermark */}
-                                    <div aria-hidden style={{
-                                        position     : 'absolute',
-                                        right        : 18, bottom: 10,
-                                        fontSize     : 88,
-                                        fontWeight   : 900,
-                                        fontFamily   : "'Syne', sans-serif",
-                                        color        : `${a.hex}09`,
-                                        lineHeight   : 1,
-                                        userSelect   : 'none',
-                                        pointerEvents: 'none',
-                                    }}>
-                                        0{i + 1}
-                                    </div>
-
-                                    <p style={{
-                                        margin    : 0,
-                                        fontSize  : 'clamp(0.82rem, 1.15vw, 0.9rem)',
-                                        lineHeight: 1.8,
-                                        color     : 'rgba(200,200,225,0.42)',
-                                        fontFamily: "'DM Sans', sans-serif",
-                                        position  : 'relative', zIndex: 1,
-                                    }}>
-                                        {desc}
-                                    </p>
+                                    {ICONS[title]}
                                 </div>
+                                <p style={{
+                                    margin       : 0,
+                                    fontSize     : 11,
+                                    fontWeight   : 700,
+                                    letterSpacing: '0.18em',
+                                    textTransform: 'uppercase',
+                                    color        : a.hex,
+                                    opacity      : 0.6,
+                                    fontFamily   : "'DM Sans', sans-serif",
+                                }}>
+                                    0{i + 1} / 0{SERVICES.length}
+                                </p>
                             </div>
                         </div>
-                    );
-                })}
-            </div>
 
-            {/* ── Progress dots ── */}
+                        {/* ── Text side ── */}
+                        <div style={{
+                            order     : textOrder,
+                            flex      : '1 1 55%',
+                            padding   : 'clamp(36px, 5vw, 72px) clamp(28px, 5vw, 72px)',
+                            display   : 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            gap       : 0,
+                        }}>
+                            {/* index */}
+                            <p style={{
+                                margin       : '0 0 10px',
+                                fontSize     : 10,
+                                fontWeight   : 700,
+                                letterSpacing: '0.14em',
+                                textTransform: 'uppercase',
+                                color        : a.hex,
+                                fontFamily   : "'DM Sans', sans-serif",
+                                display      : 'flex',
+                                alignItems   : 'center',
+                                gap          : 8,
+                            }}>
+                                <span style={{ display:'inline-block', width:20, height:1.5, background:a.hex, opacity:0.4, borderRadius:2 }} />
+                                {title}
+                            </p>
+
+                            <h3 style={{
+                                margin       : '0 0 16px',
+                                fontFamily   : "'Syne', sans-serif",
+                                fontWeight   : 800,
+                                fontSize     : 'clamp(1.5rem, 2.8vw, 2.4rem)',
+                                lineHeight   : 1.1,
+                                letterSpacing: '-0.025em',
+                                color        : 'var(--color-ink)',
+                            }}>
+                                {title}
+                            </h3>
+
+                            <p style={{
+                                margin    : '0 0 24px',
+                                fontSize  : 'clamp(0.88rem, 1.2vw, 1rem)',
+                                lineHeight: 1.8,
+                                color     : 'var(--color-ink-subtle)',
+                                fontFamily: "'DM Sans', sans-serif",
+                                maxWidth  : 480,
+                            }}>
+                                {desc}
+                            </p>
+
+                            {/* Tags */}
+                            <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                                {tags.map(tag => (
+                                    <span key={tag} style={{
+                                        padding      : '5px 14px',
+                                        borderRadius : 6,
+                                        fontSize     : 11,
+                                        fontWeight   : 600,
+                                        letterSpacing: '0.04em',
+                                        background   : a.tag,
+                                        border       : `1px solid ${a.border}`,
+                                        color        : a.hex,
+                                        fontFamily   : "'DM Sans', sans-serif",
+                                    }}>
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            })}
+
+            {/* bottom border */}
             <div style={{
-                flexShrink    : 0,
-                display       : 'flex',
-                justifyContent: 'center',
-                gap           : 8,
-                padding       : '10px 0 18px',
-                position      : 'relative', zIndex: 10,
-            }}>
-                {SERVICES.map((_, i) => (
-                    <div
-                        key={i}
-                        id={`svc-dot-${i}`}
-                        style={{
-                            width       : 6, height: 6,
-                            borderRadius: '50%',
-                            background  : i === 0 ? ACCENTS[0].hex : 'rgba(255,255,255,0.15)',
-                            transition  : 'background 0.3s, transform 0.3s',
-                            transform   : i === 0 ? 'scale(1.4)' : 'scale(1)',
-                        }}
-                    />
-                ))}
-            </div>
-            </div>{/* end inner flex wrapper */}
+                borderBottom: '1px solid var(--color-border-light)',
+            }} />
         </section>
     );
 }
