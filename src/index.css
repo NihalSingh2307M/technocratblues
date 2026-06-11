@@ -6,10 +6,10 @@
    ───────────────────────────────────────────── */
 :root {
   /* ── Colors ── */
-  --color-brand:          #1A47E8;
-  --color-brand-dark:     #1338c4;
-  --color-brand-light:    rgba(26, 71, 232, 0.08);
-  --color-brand-glow:     rgba(26, 71, 232, 0.20);
+  --color-brand:          #7078D0;
+  --color-brand-dark:     #5a62b8;
+  --color-brand-light:    rgba(112, 120, 208, 0.08);
+  --color-brand-glow:     rgba(112, 120, 208, 0.20);
 
   --color-ink:            #111111;
   --color-ink-soft:       #444444;
@@ -29,12 +29,12 @@
   --color-border:         rgba(0, 0, 0, 0.07);
   --color-border-light:   #f3f4f6;   /* gray-100 */
   --color-border-medium:  #e5e7eb;   /* gray-200 */
-  --color-border-blue:    rgba(147, 197, 253, 0.4);   /* blue-100ish */
+  --color-border-blue:    rgba(112, 120, 208, 0.30);   /* blue-100ish */
 
   /* ── Blue tints (for bg chips, tags, form rings) ── */
-  --color-blue-50:        #eff6ff;
-  --color-blue-100:       #dbeafe;
-  --color-ring-blue:      rgba(147, 197, 253, 0.35);
+  --color-blue-50:        #f0f0fb;
+  --color-blue-100:       #d8d9f5;
+  --color-ring-blue:      rgba(112, 120, 208, 0.25);
 
   /* ── Status ── */
   --color-success:        #22c55e;
@@ -560,7 +560,7 @@
   .bg-surface        { background-color: var(--color-surface); }
   .bg-surface-white  { background-color: var(--color-surface-white); }
   .bg-surface-dark   { background-color: var(--color-surface-dark); }
-
+  .bg-surface-darker { background-color: var(--color-surface-darker); }
   /* Typography helpers */
   .font-display  { font-family: var(--font-display); }
   .font-serif    { font-family: var(--font-serif); }

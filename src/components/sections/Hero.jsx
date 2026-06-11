@@ -194,7 +194,7 @@ export default function Hero() {
               </div>
 
               {/* Floating code card */}
-              <div className="absolute top-0 right-0 bg-surface-card rounded-2xl shadow-xl px-4 py-3">
+              <div className="absolute top-0 right-0 bg-surface-dark rounded-2xl shadow-xl px-4 py-3">
                 <p className="text-xs font-mono text-brand whitespace-nowrap">npm run deploy</p>
                 <p className="text-[10px] font-mono text-green-400 mt-1">✓ Build successful</p>
               </div>

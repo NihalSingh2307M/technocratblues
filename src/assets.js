@@ -146,18 +146,9 @@ export const ABOUT_VALUES = [
 ];
 
 // ── Contact / Google Form ─────────────────────────────────────────────────────
-// To configure:
-//  1. Create a Google Form with 3 fields: Email, Query, Domain
-//  2. Get the form POST URL (ends in /formResponse)
-//  3. Get each field's entry ID from the pre-filled link
-//  4. Replace the placeholder values below
+
 export const CONTACT_FORM = {
-  actionUrl: 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse',
-  entries: {
-    email:  'entry.YOUR_EMAIL_ENTRY_ID',
-    query:  'entry.YOUR_QUERY_ENTRY_ID',
-    domain: 'entry.YOUR_DOMAIN_ENTRY_ID',
-  },
+  scriptUrl: import.meta.env.VITE_CONTACT_SCRIPT_URL,
 };
 
 export const CONTACT_DOMAINS = [
