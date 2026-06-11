@@ -12,7 +12,7 @@ export default function Footer() {
             className="flex items-center gap-2.5 cursor-pointer"
           >
             <span className="font-bold text-white text-xl tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              {BRAND.nameColored.base}<span className="text-brand">{BRAND.nameColored.accent}</span>
+              {BRAND.nameColored.base}{BRAND.nameColored.accent}
             </span>
           </button>
           <p className="text-xs text-white/40 text-center sm:text-left">

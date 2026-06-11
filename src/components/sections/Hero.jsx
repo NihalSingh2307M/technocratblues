@@ -11,7 +11,7 @@ const STAT_CONFIG = [
   {
     value: 'Innovation-Driven', label: 'Focused on the future',
     renderIcon: () => (
-      <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" style={{ width: 16, height: 16 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
       </svg>
     ),
@@ -20,16 +20,16 @@ const STAT_CONFIG = [
   {
     value: 'Reliable', label: 'by default',
     renderIcon: () => (
-      <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" style={{ width: 16, height: 16 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       </svg>
     ),
     color: '#5B8DEF', glow: 'rgba(91,141,239,0.18)', bar: 1.0,
   },
   {
-    value: 'Agile', label: 'Fast,adaptive,efficient',
+    value: 'Agile', label: 'Fast, adaptive, efficient',
     renderIcon: () => (
-      <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" style={{ width: 16, height: 16 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
@@ -86,12 +86,12 @@ function StatsStrip() {
 
   return (
     <div ref={stripRef} style={{ opacity: 0 }} className="w-full border-t border-[#e8eaf0]/60 bg-white/40 backdrop-blur-sm">
-      <div className="container-custom py-5 flex items-stretch gap-3 sm:gap-4">
+      <div className="container-custom py-5 grid grid-cols-3 gap-2 sm:gap-4">
         {STAT_CONFIG.map(({ value, label, renderIcon, color, glow, }, i) => (
           <div
             key={value}
             ref={el => { cardsRef.current[i] = el; }}
-            className="relative flex-1 rounded-2xl px-4 py-3.5 overflow-hidden cursor-default"
+            className="relative rounded-2xl px-2.5 sm:px-4 py-3 sm:py-3.5 overflow-hidden cursor-default"
             style={{
               background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,255,0.95) 100%)',
               border: `1px solid ${color}22`,
@@ -100,12 +100,12 @@ function StatsStrip() {
             }}
           >
             <div ref={el => { glowsRef.current[i] = el; }} className="absolute -top-4 -right-4 w-16 h-16 rounded-full blur-xl pointer-events-none" style={{ background: glow, opacity: 0.3 }} />
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-2.5" style={{ background: `${color}15`, color }}>
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center mb-2" style={{ background: `${color}15`, color }}>
               {renderIcon()}
             </div>
-            <p className="font-display text-sm font-black leading-tight" style={{ color: '#111' }}>{value}</p>
-            <p className="text-[11px] mt-0.5" style={{ color: '#888' }}>{label}</p>
-            <div className="mt-3 h-0.5 rounded-full overflow-hidden" style={{ background: `${color}18` }}>
+            <p className="font-display text-[10px] sm:text-sm font-black leading-snug break-words" style={{ color: '#111' }}>{value}</p>
+            <p className="text-[9px] sm:text-[11px] mt-0.5 leading-tight" style={{ color: '#888' }}>{label}</p>
+            <div className="mt-2 sm:mt-3 h-0.5 rounded-full overflow-hidden" style={{ background: `${color}18` }}>
               <div ref={el => { barsRef.current[i] = el; }} className="h-full rounded-full" style={{ width: '100%', background: `linear-gradient(90deg, ${color}88, ${color})`, transformOrigin: 'left center', transform: 'scaleX(0)' }} />
             </div>
           </div>
