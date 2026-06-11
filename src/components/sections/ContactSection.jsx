@@ -36,7 +36,6 @@ async function submitToSheet(form, retries = 2) {
         query: form.query.trim(),
         origin: window.location.origin,
     };
-
     for (let attempt = 0; attempt <= retries; attempt++) {
         try {
             const url = `${CONTACT_FORM.scriptUrl}?${new URLSearchParams(payload)}`;
@@ -60,11 +59,10 @@ export default function ContactSection() {
 
     const [form, setForm] = useState(EMPTY_FORM);
     const [touched, setTouched] = useState({});
-    const [status, setStatus] = useState('idle'); // idle | submitting | success | error
+    const [status, setStatus] = useState('idle'); // idle|submitting|success|error
     const [serverMsg, setServerMsg] = useState('');
     const [charCount, setCharCount] = useState(0);
 
-    // Client-side throttle (soft guard — real enforcement is server-side)
     const { isThrottled, throttleReason, secondsLeft, markSubmitted } = useFormThrottle();
 
     useEffect(() => {
@@ -107,21 +105,14 @@ export default function ContactSection() {
         e.preventDefault();
         setTouched({ name: true, email: true, domain: true, query: true });
         if (!isFormValid) return;
-
-        // Client-side throttle check
-        if (isThrottled) {
-            setStatus('error');
-            setServerMsg(throttleReason);
-            return;
-        }
+        if (isThrottled) { setStatus('error'); setServerMsg(throttleReason); return; }
 
         setStatus('submitting');
         setServerMsg('');
-
         const result = await submitToSheet(form);
 
         if (result.ok) {
-            markSubmitted(); // record hit in sessionStorage
+            markSubmitted();
             setStatus('success');
             setForm(EMPTY_FORM);
             setTouched({});
@@ -145,13 +136,14 @@ export default function ContactSection() {
                             <span className="badge-dot" />
                             <span className="badge-label">Get In Touch</span>
                         </span>
-                        <h2 className="section-title mb-5" style={{ fontFamily: 'var(--font-display)' }}>
-                            Let's build something{' '}
-                            <em style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brand)' }}>remarkable</em> together.
+                        <h2 className="section-title font-display mb-5">
+                            Let&apos;s build something{' '}
+                            <em className="font-serif italic text-brand">remarkable</em> together.
                         </h2>
                         <p className="section-subtitle mb-12">
                             Have a project in mind? Drop your query and we'll get back to you shortly.
                         </p>
+
                         <div className="flex flex-col gap-5 mb-8">
                             <div className="flex items-center gap-4">
                                 <div className="icon-box">
@@ -162,18 +154,23 @@ export default function ContactSection() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-[#aaa] uppercase tracking-wider mb-0.5">Visit us</p>
-                                    <p className="text-sm font-semibold text-[#111]">{BRAND.address.line1}</p>
-                                    <p className="text-xs text-[#888] mt-0.5">{BRAND.address.line2}</p>
+                                    <p className="text-xs text-(--color-ink-pale) uppercase tracking-wider mb-0.5">Visit us</p>
+                                    <p className="text-sm font-semibold text-(--color-ink)">{BRAND.address.line1}</p>
+                                    <p className="text-xs text-(--color-ink-ghost) mt-0.5">{BRAND.address.line2}</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-(--color-success-bg) border border-(--color-success-border)">
+
+                        {/* Availability badge */}
+                        <div className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl
+                            bg-(--color-success-bg) border border-(--color-success-border)">
                             <span className="relative flex h-2.5 w-2.5">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
                             </span>
-                            <span className="text-sm font-semibold text-(--color-success-text)">Available for new projects</span>
+                            <span className="text-sm font-semibold text-(--color-success-text)">
+                                Available for new projects
+                            </span>
                         </div>
                     </div>
 
@@ -186,8 +183,8 @@ export default function ContactSection() {
                                         <path d="M5 12l4 4 10-10" stroke="var(--color-success)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-black text-[#111] font-display">Query submitted!</h3>
-                                <p className="text-[#666] text-sm max-w-xs">
+                                <h3 className="font-display text-xl font-black text-(--color-ink)">Query submitted!</h3>
+                                <p className="text-(--color-ink-subtle) text-sm max-w-xs">
                                     Thanks for reaching out. We'll review your query and get back to you within 24 hours.
                                 </p>
                                 <button onClick={() => setStatus('idle')} className="mt-2 text-sm font-semibold text-brand hover:underline">
@@ -197,11 +194,13 @@ export default function ContactSection() {
                         ) : (
                             <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
                                 <div className="mb-1">
-                                    <h3 className="text-xl font-black text-[#111] font-display">Send us your query</h3>
-                                    <p className="text-xs text-[#aaa] mt-1">Responses are captured in our team sheet — we'll reply within 24h.</p>
+                                    <h3 className="font-display text-xl font-black text-(--color-ink)">Send us your query</h3>
+                                    <p className="text-xs text-(--color-ink-pale) mt-1">
+                                        Responses are captured in our team sheet — we'll reply within 24h.
+                                    </p>
                                 </div>
 
-                                {/* Throttle warning banner */}
+                                {/* Throttle warning */}
                                 {isThrottled && (
                                     <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
                                         <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24">
@@ -220,7 +219,9 @@ export default function ContactSection() {
                                     <label className="input-label">Full Name <span className="text-red-400">*</span></label>
                                     <input
                                         type="text" required autoComplete="name" placeholder="Jane Smith"
-                                        value={form.name} onChange={e => handleChange('name', e.target.value)} onBlur={() => handleBlur('name')}
+                                        value={form.name}
+                                        onChange={e => handleChange('name', e.target.value)}
+                                        onBlur={() => handleBlur('name')}
                                         className={`input${visibleErrors.name ? ' border-red-400' : ''}`}
                                     />
                                     {visibleErrors.name && <p className="text-xs text-(--color-error)">{visibleErrors.name}</p>}
@@ -231,7 +232,9 @@ export default function ContactSection() {
                                     <label className="input-label">Email ID <span className="text-red-400">*</span></label>
                                     <input
                                         type="email" required autoComplete="email" placeholder="you@company.com"
-                                        value={form.email} onChange={e => handleChange('email', e.target.value)} onBlur={() => handleBlur('email')}
+                                        value={form.email}
+                                        onChange={e => handleChange('email', e.target.value)}
+                                        onBlur={() => handleBlur('email')}
                                         className={`input${visibleErrors.email ? ' border-red-400' : ''}`}
                                     />
                                     {visibleErrors.email && <p className="text-xs text-(--color-error)">{visibleErrors.email}</p>}
@@ -241,7 +244,9 @@ export default function ContactSection() {
                                 <div className="flex flex-col gap-1.5">
                                     <label className="input-label">Domain / Area of Interest <span className="text-red-400">*</span></label>
                                     <select
-                                        required value={form.domain} onChange={e => handleChange('domain', e.target.value)} onBlur={() => handleBlur('domain')}
+                                        required value={form.domain}
+                                        onChange={e => handleChange('domain', e.target.value)}
+                                        onBlur={() => handleBlur('domain')}
                                         className={`input cursor-pointer${visibleErrors.domain ? ' border-red-400' : ''}`}
                                     >
                                         <option value="">Select a domain...</option>
@@ -254,14 +259,16 @@ export default function ContactSection() {
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex items-center justify-between">
                                         <label className="input-label">Your Query <span className="text-red-400">*</span></label>
-                                        <span className={`text-xs tabular-nums ${charCount > 1800 ? 'text-amber-500' : 'text-[#bbb]'}`}>
+                                        <span className={`text-xs tabular-nums ${charCount > 1800 ? 'text-amber-500' : 'text-(--color-ink-dim)'}`}>
                                             {charCount}/2000
                                         </span>
                                     </div>
                                     <textarea
                                         required rows={4} maxLength={2000}
                                         placeholder="Describe your project, requirement, or question..."
-                                        value={form.query} onChange={e => handleChange('query', e.target.value)} onBlur={() => handleBlur('query')}
+                                        value={form.query}
+                                        onChange={e => handleChange('query', e.target.value)}
+                                        onBlur={() => handleBlur('query')}
                                         className={`input resize-none${visibleErrors.query ? ' border-red-400' : ''}`}
                                     />
                                     {visibleErrors.query && <p className="text-xs text-(--color-error)">{visibleErrors.query}</p>}
@@ -269,7 +276,9 @@ export default function ContactSection() {
 
                                 {/* Server error */}
                                 {status === 'error' && !isThrottled && (
-                                    <div className="flex items-start gap-2 text-xs text-(--color-error) bg-(--color-error-bg) border border-(--color-error-border) rounded-lg px-3 py-2.5">
+                                    <div className="flex items-start gap-2 text-xs text-(--color-error)
+                                  bg-(--color-error-bg) border border-(--color-error-border)
+                                  rounded-lg px-3 py-2.5">
                                         <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24">
                                             <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8" />
                                             <path d="M12 8v4m0 4h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -279,7 +288,8 @@ export default function ContactSection() {
                                 )}
 
                                 <button
-                                    type="submit" disabled={submitDisabled}
+                                    type="submit"
+                                    disabled={submitDisabled}
                                     className="btn btn-primary btn-full mt-1 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {status === 'submitting' ? (
@@ -290,10 +300,13 @@ export default function ContactSection() {
                                             </svg>
                                             Submitting…
                                         </span>
-                                    ) : isThrottled ? `Wait ${secondsLeft > 0 ? secondsLeft + 's' : '…'}` : 'Submit Query →'}
+                                    ) : isThrottled
+                                        ? `Wait ${secondsLeft > 0 ? secondsLeft + 's' : '…'}`
+                                        : 'Submit Query →'
+                                    }
                                 </button>
 
-                                <p className="text-center text-xs text-[#ccc]">
+                                <p className="text-center text-xs text-(--color-ink-dim)">
                                     Your details are stored securely in our team's Google Sheet.
                                 </p>
                             </form>

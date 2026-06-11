@@ -3,297 +3,180 @@ import { SERVICES } from '../../assets';
 import useServiceAnimation from '../../hooks/useServiceAnimation';
 
 /*
-  Layout: full-width alternating rows — each service takes the entire width.
-  Even rows: [CARD left] [TEXT right]
-  Odd  rows: [TEXT left] [CARD right]
-
-  No dark background — inherits site background.
-  Accent palette: periwinkle family (#7078D0 primary, #7888D0 secondary).
+  Layout  : original alternating rows — animation is UNCHANGED.
+  Card side: updated to dark-card style (number / icon / title+desc / arrow).
+  Text side: identical to original.
+  Colors  : light soothing pastel card backgrounds per accent slot.
 */
 
-const ACCENTS = [
-    { border: 'rgba(112,120,208,0.22)', glow: 'rgba(112,120,208,0.08)', hex: '#7078D0', soft: 'rgba(112,120,208,0.06)', tag: 'rgba(112,120,208,0.12)' },
-    { border: 'rgba(120,136,208,0.22)', glow: 'rgba(120,136,208,0.08)', hex: '#7888D0', soft: 'rgba(120,136,208,0.06)', tag: 'rgba(120,136,208,0.12)' },
-    { border: 'rgba(140,110,210,0.22)', glow: 'rgba(140,110,210,0.08)', hex: '#9B6FD8', soft: 'rgba(140,110,210,0.06)', tag: 'rgba(140,110,210,0.12)' },
-    { border: 'rgba(90,140,200,0.22)',  glow: 'rgba(90,140,200,0.08)',  hex: '#5A8CC8', soft: 'rgba(90,140,200,0.06)',  tag: 'rgba(90,140,200,0.12)'  },
-    { border: 'rgba(160,120,200,0.22)', glow: 'rgba(160,120,200,0.08)', hex: '#A078C8', soft: 'rgba(160,120,200,0.06)', tag: 'rgba(160,120,200,0.12)' },
-    { border: 'rgba(100,130,220,0.22)', glow: 'rgba(100,130,220,0.08)', hex: '#6482DC', soft: 'rgba(100,130,220,0.06)', tag: 'rgba(100,130,220,0.12)' },
-];
+const ACCENT_COUNT = 4;
+const svcVar = (i, key) => `var(--svc-${i % ACCENT_COUNT}-${key})`;
 
-const ICONS = {
-    'Product Engineering': (
-        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    ),
-    'UI/UX Design Systems': (
-        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
-            <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.7" />
-            <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.7" />
-            <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.7" />
-            <path d="M6.5 14v7M3 17.5h7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-        </svg>
-    ),
-    'Cloud Infrastructure': (
-        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
-            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"
-                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    ),
-    'AI & ML Integration': (
-        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
-            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.7" />
-            <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"
-                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-        </svg>
-    ),
-    'Security & Compliance': (
-        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    ),
-    'Tech Consulting': (
-        <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    ),
-};
+/* Icons matched 1-to-1 with the 4 services */
+const ICONS = [
+    /* 01 — Monitor / Web & Mobile */
+    <svg key="monitor" viewBox="0 0 24 24" fill="none" width="28" height="28">
+        <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M8 21h8M12 17v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M6 7h4M6 10h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>,
+    /* 02 — Layers / Digital Product Engineering */
+    <svg key="layers" viewBox="0 0 24 24" fill="none" width="28" height="28">
+        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>,
+    /* 03 — Chart arrow / Scalable Tech */
+    <svg key="chart" viewBox="0 0 24 24" fill="none" width="28" height="28">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <polyline points="16 7 22 7 22 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>,
+    /* 04 — Shield check / Reliable Delivery */
+    <svg key="shield" viewBox="0 0 24 24" fill="none" width="28" height="28">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <polyline points="9 12 11 14 15 10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>,
+];
 
 export default function ServiceSection() {
     const sectionRef = useRef(null);
     const rowsRef    = useRef([]);
 
+    /* ── ORIGINAL animation hook — zero changes ── */
     useServiceAnimation({ sectionRef, rowsRef });
 
     return (
         <section
             id="services"
             ref={sectionRef}
-            style={{
-                background: 'transparent',
-                position  : 'relative',
-                padding   : 'clamp(72px, 8vw, 112px) 0',
-                overflow  : 'hidden',
-            }}
+            className="relative overflow-hidden"
+            style={{ padding: 'clamp(72px, 8vw, 112px) 0' }}
         >
             {/* ── Section header ── */}
-            <div style={{
-                padding      : '0 clamp(24px, 6vw, 96px)',
-                marginBottom : 'clamp(56px, 7vw, 88px)',
-                display      : 'flex',
-                alignItems   : 'flex-end',
-                justifyContent: 'space-between',
-                flexWrap     : 'wrap',
-                gap          : 24,
-            }}>
+            <div className="container-custom mb-[clamp(56px,7vw,88px)] flex flex-wrap items-end justify-between gap-6">
                 <div>
-                    <p style={{
-                        margin       : '0 0 14px',
-                        fontSize     : 11,
-                        fontWeight   : 700,
-                        letterSpacing: '0.16em',
-                        textTransform: 'uppercase',
-                        color        : '#7078D0',
-                        fontFamily   : "'DM Sans', sans-serif",
-                        display      : 'flex',
-                        alignItems   : 'center',
-                        gap          : 10,
-                    }}>
-                        <span style={{ display:'inline-block', width:24, height:1.5, background:'#7078D0', borderRadius:2, opacity:0.5 }} />
+                    <p className="flex items-center gap-2.5 mb-3.5 text-[11px] font-bold tracking-[0.16em] uppercase text-brand font-body">
+                        <span className="inline-block w-6 h-px bg-brand rounded opacity-50" />
                         What We Do
                     </p>
-                    <h2 style={{
-                        margin       : 0,
-                        fontFamily   : "'Syne', sans-serif",
-                        fontWeight   : 900,
-                        lineHeight   : 1.06,
-                        letterSpacing: '-0.03em',
-                        color        : 'var(--color-ink)',
-                    }}>
-                        <span style={{ display:'block', fontSize:'clamp(2rem, 4vw, 3.6rem)' }}>
-                            Engineering clarity
-                        </span>
-                        <span style={{ display:'block', fontSize:'clamp(2rem, 4vw, 3.6rem)' }}>
+                    <h2 className="font-display font-black leading-[1.06] tracking-tight text-[color:var(--color-ink)]">
+                        <span className="block text-[clamp(2rem,4vw,3.6rem)]">Engineering clarity</span>
+                        <span className="block text-[clamp(2rem,4vw,3.6rem)]">
                             into every{' '}
-                            <span style={{ color: '#7888D0' }}>solution.</span>
+                            <span style={{ color: 'var(--svc-1-hex)' }}>solution.</span>
                         </span>
                     </h2>
                 </div>
-
-                <p style={{
-                    margin    : 0,
-                    maxWidth  : 320,
-                    fontSize  : 'clamp(0.84rem, 1.2vw, 0.94rem)',
-                    lineHeight: 1.8,
-                    color     : 'var(--color-ink-subtle)',
-                    fontFamily: "'DM Sans', sans-serif",
-                    paddingBottom: 6,
-                }}>
+                <p className="max-w-xs pb-1.5 text-[clamp(0.84rem,1.2vw,0.94rem)] leading-[1.8] text-[color:var(--color-ink-subtle)] font-body">
                     From first sketch to production scale, we help teams build smarter,
                     move faster, and deliver with confidence.
                 </p>
             </div>
 
-            {/* ── Alternating rows ── */}
+            {/* ── Alternating rows — ORIGINAL structure ── */}
             {SERVICES.map(({ title, desc, tags }, i) => {
-                const a      = ACCENTS[i % ACCENTS.length];
-                const isEven = i % 2 === 0;
-                // even: card LEFT, text RIGHT | odd: card RIGHT, text LEFT
-                const cardOrder = isEven ? 0 : 1;
-                const textOrder = isEven ? 1 : 0;
+                const isEven  = i % 2 === 0;
+                const cardOrder = isEven ? 'order-first' : 'order-last';
+                const textOrder = isEven ? 'order-last'  : 'order-first';
 
                 return (
                     <div
                         key={title}
                         ref={el => { rowsRef.current[i] = el; }}
-                        style={{
-                            display      : 'flex',
-                            alignItems   : 'center',
-                            gap          : 0,
-                            minHeight    : 'clamp(280px, 28vw, 400px)',
-                            borderTop    : `1px solid var(--color-border-light)`,
-                            overflow     : 'hidden',
-                        }}
+                        className="svc-row"
                     >
-                        {/* ── Card side ── */}
-                        <div style={{
-                            order     : cardOrder,
-                            flex      : '0 0 45%',
-                            alignSelf : 'stretch',
-                            position  : 'relative',
-                            background: a.soft,
-                            display   : 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding   : 'clamp(32px, 4vw, 56px)',
-                            overflow  : 'hidden',
-                        }}>
-                            {/* subtle corner glow */}
-                            <div aria-hidden style={{
-                                position     : 'absolute',
-                                inset        : 0,
-                                background   : isEven
-                                    ? `radial-gradient(ellipse 70% 60% at 0% 50%, ${a.glow} 0%, transparent 65%)`
-                                    : `radial-gradient(ellipse 70% 60% at 100% 50%, ${a.glow} 0%, transparent 65%)`,
-                                pointerEvents: 'none',
-                            }} />
+                        {/* ── Card side — new dark-card content, light bg ── */}
+                        <div
+                            className={`svc-card-side ${cardOrder}`}
+                            style={{ background: svcVar(i, 'card-bg') }}
+                        >
+                            {/* Subtle top-edge glow */}
+                            <div
+                                aria-hidden
+                                className="absolute inset-0 pointer-events-none"
+                                style={{
+                                    background: isEven
+                                        ? `radial-gradient(ellipse 70% 60% at 0% 40%, ${svcVar(i, 'card-glow')} 0%, transparent 65%)`
+                                        : `radial-gradient(ellipse 70% 60% at 100% 40%, ${svcVar(i, 'card-glow')} 0%, transparent 65%)`,
+                                }}
+                            />
 
-                            {/* ghost number */}
-                            <div aria-hidden style={{
-                                position     : 'absolute',
-                                right        : isEven ? 20 : 'auto',
-                                left         : isEven ? 'auto' : 20,
-                                bottom       : 12,
-                                fontSize     : 'clamp(80px, 10vw, 140px)',
-                                fontWeight   : 900,
-                                fontFamily   : "'Syne', sans-serif",
-                                color        : `${a.hex}0d`,
-                                lineHeight   : 1,
-                                userSelect   : 'none',
-                                pointerEvents: 'none',
-                            }}>
-                                0{i + 1}
+                            {/* Card inner: number → icon → title+desc */}
+                            <div className="relative z-10 flex flex-col justify-between h-full w-full">
+
+                                {/* Top: index number */}
+                                <p
+                                    className="text-[12px] font-bold tracking-[0.18em] uppercase font-body"
+                                    style={{ color: svcVar(i, 'hex'), opacity: 0.5 }}
+                                >
+                                    0{i + 1}
+                                </p>
+
+                                {/* Center: icon box */}
+                                <div className="flex items-center justify-center flex-1 py-6">
+                                    <div
+                                        className="svc-icon-box"
+                                        style={{
+                                            border: `1.5px solid ${svcVar(i, 'border')}`,
+                                            color: svcVar(i, 'hex'),
+                                            background: svcVar(i, 'tag'),
+                                            boxShadow: `0 4px 20px ${svcVar(i, 'glow')}`,
+                                        }}
+                                    >
+                                        {ICONS[i]}
+                                    </div>
+                                </div>
+
+                                {/* Bottom: title + desc */}
+                                <div>
+                                    <h4
+                                        className="font-display font-bold text-[clamp(0.95rem,1.4vw,1.15rem)] leading-[1.25] tracking-[-0.02em] mb-2"
+                                        style={{ color: 'var(--color-ink)' }}
+                                    >
+                                        {title}
+                                    </h4>
+                                    <p
+                                        className="font-body text-[clamp(0.78rem,1vw,0.875rem)] leading-[1.7]"
+                                        style={{ color: 'var(--color-ink-subtle)' }}
+                                    >
+                                        {desc}
+                                    </p>
+                                </div>
                             </div>
 
-                            {/* icon + number label */}
-                            <div style={{ position:'relative', zIndex:1, textAlign:'center' }}>
-                                <div style={{
-                                    display       : 'inline-flex',
-                                    alignItems    : 'center',
-                                    justifyContent: 'center',
-                                    width         : 72,
-                                    height        : 72,
-                                    borderRadius  : 20,
-                                    background    : 'var(--color-surface-white)',
-                                    border        : `1px solid ${a.border}`,
-                                    color         : a.hex,
-                                    boxShadow     : `0 4px 24px ${a.glow}, 0 1px 4px rgba(0,0,0,0.06)`,
-                                    marginBottom  : 16,
-                                }}>
-                                    {ICONS[title]}
-                                </div>
-                                <p style={{
-                                    margin       : 0,
-                                    fontSize     : 11,
-                                    fontWeight   : 700,
-                                    letterSpacing: '0.18em',
-                                    textTransform: 'uppercase',
-                                    color        : a.hex,
-                                    opacity      : 0.6,
-                                    fontFamily   : "'DM Sans', sans-serif",
-                                }}>
-                                    0{i + 1} / 0{SERVICES.length}
-                                </p>
+                            {/* Arrow — bottom-right corner */}
+                            <div
+                                aria-hidden
+                                className="absolute bottom-5 right-5 svc-card-arrow"
+                                style={{ color: svcVar(i, 'hex') }}
+                            >
+                                ↗
                             </div>
                         </div>
 
-                        {/* ── Text side ── */}
-                        <div style={{
-                            order     : textOrder,
-                            flex      : '1 1 55%',
-                            padding   : 'clamp(36px, 5vw, 72px) clamp(28px, 5vw, 72px)',
-                            display   : 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            gap       : 0,
-                        }}>
-                            {/* index */}
-                            <p style={{
-                                margin       : '0 0 10px',
-                                fontSize     : 10,
-                                fontWeight   : 700,
-                                letterSpacing: '0.14em',
-                                textTransform: 'uppercase',
-                                color        : a.hex,
-                                fontFamily   : "'DM Sans', sans-serif",
-                                display      : 'flex',
-                                alignItems   : 'center',
-                                gap          : 8,
-                            }}>
-                                <span style={{ display:'inline-block', width:20, height:1.5, background:a.hex, opacity:0.4, borderRadius:2 }} />
+                        {/* ── Text side — ORIGINAL unchanged ── */}
+                        <div className={`svc-text-side ${textOrder}`}>
+                            <p className="svc-eyebrow" style={{ color: svcVar(i, 'hex') }}>
+                                <span className="svc-eyebrow-line" style={{ background: svcVar(i, 'hex') }} />
                                 {title}
                             </p>
-
-                            <h3 style={{
-                                margin       : '0 0 16px',
-                                fontFamily   : "'Syne', sans-serif",
-                                fontWeight   : 800,
-                                fontSize     : 'clamp(1.5rem, 2.8vw, 2.4rem)',
-                                lineHeight   : 1.1,
-                                letterSpacing: '-0.025em',
-                                color        : 'var(--color-ink)',
-                            }}>
+                            <h3 className="font-display font-extrabold text-[clamp(1.5rem,2.8vw,2.4rem)] leading-[1.1] tracking-[-0.025em] text-[color:var(--color-ink)] mb-4">
                                 {title}
                             </h3>
-
-                            <p style={{
-                                margin    : '0 0 24px',
-                                fontSize  : 'clamp(0.88rem, 1.2vw, 1rem)',
-                                lineHeight: 1.8,
-                                color     : 'var(--color-ink-subtle)',
-                                fontFamily: "'DM Sans', sans-serif",
-                                maxWidth  : 480,
-                            }}>
+                            <p className="font-body text-[clamp(0.88rem,1.2vw,1rem)] leading-[1.8] text-[color:var(--color-ink-subtle)] max-w-[480px] mb-6">
                                 {desc}
                             </p>
-
-                            {/* Tags */}
-                            <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                            <div className="flex flex-wrap gap-2">
                                 {tags.map(tag => (
-                                    <span key={tag} style={{
-                                        padding      : '5px 14px',
-                                        borderRadius : 6,
-                                        fontSize     : 11,
-                                        fontWeight   : 600,
-                                        letterSpacing: '0.04em',
-                                        background   : a.tag,
-                                        border       : `1px solid ${a.border}`,
-                                        color        : a.hex,
-                                        fontFamily   : "'DM Sans', sans-serif",
-                                    }}>
+                                    <span
+                                        key={tag}
+                                        className="svc-tag"
+                                        style={{
+                                            background: svcVar(i, 'tag'),
+                                            border: `1px solid ${svcVar(i, 'border')}`,
+                                            color: svcVar(i, 'hex'),
+                                        }}
+                                    >
                                         {tag}
                                     </span>
                                 ))}
@@ -303,10 +186,8 @@ export default function ServiceSection() {
                 );
             })}
 
-            {/* bottom border */}
-            <div style={{
-                borderBottom: '1px solid var(--color-border-light)',
-            }} />
+            {/* Bottom border */}
+            <div className="border-b border-[color:var(--color-border-light)]" />
         </section>
     );
 }

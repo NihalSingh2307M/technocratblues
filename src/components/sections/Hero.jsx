@@ -4,27 +4,42 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { HERO_HEADLINE, HERO_STATS, LOGO } from '../../assets';
 gsap.registerPlugin(ScrollTrigger);
 
+// Words that cycle on line 3 — all relevant to a tech startup
+const CYCLING_WORDS = [
+  'forward.',
+  'faster.',
+  'smarter.',
+  'at scale.',
+  'with clarity.',
+  'that lasts.',
+];
+
 function scrollToSection(id) {
-    ScrollTrigger.refresh();
-    const el = document.getElementById(id);
-    if (!el) return;
-    const pinSpacer = el.closest('[data-scrolltrigger-pin-spacer]') ?? el.parentElement?.closest('[data-scrolltrigger-pin-spacer]');
-    const target = pinSpacer ?? el;
-    const top = target.getBoundingClientRect().top + window.scrollY;
-    const isPinned = !!pinSpacer;
-    window.scrollTo({ top, behavior: isPinned ? 'instant' : 'smooth' });
+  ScrollTrigger.refresh();
+  const el = document.getElementById(id);
+  if (!el) return;
+  const pinSpacer =
+    el.closest('[data-scrolltrigger-pin-spacer]') ??
+    el.parentElement?.closest('[data-scrolltrigger-pin-spacer]');
+  const target = pinSpacer ?? el;
+  const top = target.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top, behavior: pinSpacer ? 'instant' : 'smooth' });
 }
 
 export default function Hero() {
-  const line1Ref = useRef(null);
-  const line2Ref = useRef(null);
-  const line3Ref = useRef(null);
-  const paraRef  = useRef(null);
-  const rightRef = useRef(null);
-  const tagRef   = useRef(null);
+  const line1Ref   = useRef(null);
+  const line2Ref   = useRef(null);
+  const line3Ref   = useRef(null); // wrapper that clips
+  const wordRef    = useRef(null); // the animating word span
+  const paraRef    = useRef(null);
+  const rightRef   = useRef(null);
+  const tagRef     = useRef(null);
+  const indexRef   = useRef(0);    // current word index (mutable, no re-render)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+
+      /* ── Entry animation ── */
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.3 });
       tl.fromTo(tagRef.current,   { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 });
       tl.fromTo(line1Ref.current, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, '-=0.2');
@@ -33,26 +48,72 @@ export default function Hero() {
       tl.fromTo(paraRef.current,  { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, '-=0.3');
       tl.fromTo(rightRef.current, { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.9, ease: 'power2.out' }, 0.5);
 
+      /* ── Floating card animations ── */
       gsap.to('.hero-float',   { y: -10, duration: 3,   ease: 'sine.inOut', repeat: -1, yoyo: true });
       gsap.to('.hero-float-2', { y: -7,  duration: 2.4, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 0.6 });
+
+      /* ── Word cycling (starts after entry tl finishes) ── */
+      // slide out current word upward, swap text, slide in from below
+      const cycleWord = () => {
+        const el = wordRef.current;
+        if (!el) return;
+
+        gsap.timeline()
+          // exit: slide up + fade out
+          .to(el, {
+            y: -36,
+            opacity: 0,
+            duration: 0.38,
+            ease: 'power2.in',
+          })
+          .call(() => {
+            indexRef.current = (indexRef.current + 1) % CYCLING_WORDS.length;
+            el.textContent = CYCLING_WORDS[indexRef.current];
+            // reset below for entry
+            gsap.set(el, { y: 36, opacity: 0 });
+          })
+          // enter: slide up from below + fade in
+          .to(el, {
+            y: 0,
+            opacity: 1,
+            duration: 0.42,
+            ease: 'power3.out',
+          });
+      };
+
+      // Kick off after entry animation completes (~2.2s) then every 2.4s
+      const startDelay = 2200;
+      const interval   = 2400;
+      const timer = setTimeout(() => {
+        cycleWord();
+        const id = setInterval(cycleWord, interval);
+        // store interval id on ref so cleanup can clear it
+        wordRef._intervalId = id;
+      }, startDelay);
+
+      // cleanup
+      return () => {
+        clearTimeout(timer);
+        clearInterval(wordRef._intervalId);
+      };
     });
+
     return () => ctx.revert();
   }, []);
 
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center bg-surface overflow-hidden"
-      style={{ paddingTop: '80px' }}
+      className="relative min-h-screen flex items-center bg-surface overflow-hidden pt-20"
     >
-      {/* BG blobs */}
+      {/* ── Background decorations ── */}
       <div className="absolute inset-0 pointer-events-none select-none">
         <div className="absolute top-0 right-0 w-1/2 h-2/3 bg-linear-to-bl from-blue-50/80 to-transparent" />
         <div
           className="absolute bottom-0 left-0 w-2/5 h-1/2 opacity-50"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(26,71,232,0.08) 1px, transparent 1px)',
-            backgroundSize: '26px 26px',
+            backgroundImage: 'radial-gradient(circle, rgba(112,120,208,0.08) 1px, transparent 1px)',
+            backgroundSize : '26px 26px',
           }}
         />
         <div className="absolute top-1/4 right-1/3 w-96 h-96 bg-blue-100/25 rounded-full blur-3xl" />
@@ -69,7 +130,8 @@ export default function Hero() {
             <div
               ref={tagRef}
               style={{ opacity: 0 }}
-              className="inline-flex items-center gap-2.5 w-fit px-4 py-2 rounded-full bg-blue-50 border border-blue-100 mb-8"
+              className="inline-flex items-center gap-2.5 w-fit px-4 py-2 rounded-full
+                         bg-[color:var(--color-blue-50)] border border-[color:var(--color-blue-100)] mb-8"
             >
               <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
               <span className="text-xs font-semibold text-brand tracking-wide">
@@ -79,58 +141,66 @@ export default function Hero() {
 
             {/* Headline */}
             <div className="mb-8">
+
+              {/* Line 1 */}
               <div className="overflow-hidden">
                 <h1
                   ref={line1Ref}
-                  style={{ opacity: 0, fontFamily: 'var(--font-display)' }}
-                  className="font-semibold text-[#111] leading-[1.115]
+                  style={{ opacity: 0 }}
+                  className="font-display font-semibold text-(--color-ink)] leading-[1.115]
                              text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]"
                 >
                   {HERO_HEADLINE.line1}
                 </h1>
               </div>
+
+              {/* Line 2 */}
               <div className="overflow-hidden">
                 <h1
                   ref={line2Ref}
-                  style={{ opacity: 0, fontFamily: 'var(--font-display)' }}
-                  className="font-semibold text-[#111] leading-[1.15]
+                  style={{ opacity: 0 }}
+                  className="font-display font-semibold text-(--color-ink) leading-[1.15]
                              text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]"
                 >
                   {HERO_HEADLINE.line2}
                 </h1>
               </div>
-              <div className="overflow-hidden">
+
+              {/* Line 3 — cycling word, clipped container prevents overflow during slide */}
+              <div
+                className="overflow-hidden"
+                style={{ lineHeight: 1.25 }}
+              >
                 <h1
                   ref={line3Ref}
-                  style={{
-                    opacity: 0,
-                    fontFamily: 'var(--font-serif)',
-                    fontStyle: 'italic',
-                    color: 'var(--color-brand)',
-                  }}
-                  className="font-semibold leading-[1.15]
+                  style={{ opacity: 0 }}
+                  className="font-display font-semibold text-brand leading-[1.15]
                              text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]"
                 >
-                  {HERO_HEADLINE.line3}
+                  {/* Extra overflow clip so cycling slide stays inside line bounds */}
+                  <span
+                    style={{ display: 'block', overflow: 'hidden', lineHeight: 'inherit' }}
+                  >
+                    <span ref={wordRef} style={{ display: 'inline-block' }}>
+                      {CYCLING_WORDS[0]}
+                    </span>
+                  </span>
                 </h1>
               </div>
+
             </div>
 
-            {/* Description */}
+            {/* Description + CTA */}
             <div ref={paraRef} style={{ opacity: 0 }} className="mb-8">
-              <p
-                className="text-[#555] text-base sm:text-lg leading-relaxed max-w-120"
-                style={{ fontFamily: 'var(--font-body)' }}
-              >
+              <p className="font-body text-(--color-ink-muted) text-base sm:text-lg leading-relaxed max-w-120">
                 {HERO_HEADLINE.description}
               </p>
 
-              {/* CTA row */}
               <div className="flex flex-wrap items-center gap-4 mt-8">
                 <button
                   onClick={() => scrollToSection('services')}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#444] hover:text-brand transition-colors"
-                  style={{ fontFamily: 'var(--font-body)' }}
+                  className="inline-flex items-center gap-2 text-sm font-semibold
+                             text-(--color-ink-soft) hover:text-brand transition-colors font-body"
                 >
                   Explore our expertise
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -139,7 +209,6 @@ export default function Hero() {
                 </button>
               </div>
             </div>
-
           </div>
 
           {/* ── RIGHT ── */}
@@ -149,15 +218,11 @@ export default function Hero() {
             className="flex items-center justify-center lg:justify-end"
           >
             <div className="relative w-full max-w-sm">
-              <div className="hero-float bg-surface-white rounded-3xl shadow-2xl border border-[#f3f4f6] p-6 sm:p-8 flex items-center justify-center aspect-square">
-                <img
-                  src={LOGO.src}
-                  alt={LOGO.alt}
-                  className="w-full h-full object-contain"
-                />
+              <div className="hero-float bg-surface-white rounded-3xl shadow-2xl border border-(--color-border-light) p-6 sm:p-8 flex items-center justify-center aspect-square">
+                <img src={LOGO.src} alt={LOGO.alt} className="w-full h-full object-contain" />
               </div>
 
-              {/* Floating code card */}
+              {/* Floating code badge */}
               <div className="absolute -top-5 right-4 bg-surface-card rounded-2xl shadow-xl px-4 py-3 z-10">
                 <p className="text-xs font-mono text-brand whitespace-nowrap">npm run deploy</p>
                 <p className="text-[10px] font-mono text-green-400 mt-1">✓ Build successful</p>
@@ -173,13 +238,8 @@ export default function Hero() {
         <div className="container-custom py-4 flex items-center gap-8 sm:gap-12">
           {HERO_STATS.map(({ value, label }) => (
             <div key={value} className="flex flex-col">
-              <span
-                className="text-sm font-black text-[#111]"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                {value}
-              </span>
-              <span className="text-xs text-[#888]">{label}</span>
+              <span className="font-display text-sm font-black text-(--color-ink)">{value}</span>
+              <span className="text-xs text-(--color-ink-ghost)">{label}</span>
             </div>
           ))}
         </div>

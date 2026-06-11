@@ -13,7 +13,7 @@ export const BRAND = {
   copyright: `Copyright © ${new Date().getFullYear()} Technocrat Blues Pvt Ltd — All Rights Reserved`,
 };
 //Logo 
-import logoImg from './assets/img/logo.jpeg';
+import logoImg from './assets/img/logo.jpg';
 
 export const LOGO = {
   src: logoImg,
@@ -56,40 +56,24 @@ export const HERO_HEADLINE = {
 // ── Services ─────────────────────────────────────────────────────────────────
 export const SERVICES = [
   {
-    title: 'Product Engineering',
-    desc: 'End-to-end development of scalable web and mobile applications using modern stacks and cloud-native architecture.',
-    tags: ['React', 'Node.js', 'AWS'],
-    color: 'bg-blue-50 text-[#1A47E8]',
+    title: 'Web & Mobile Application Development',
+    desc: 'Modern, intuitive applications built for real users and evolving business needs.',
+    tags: ['React', 'Spring Boot', 'Swift', 'Kotlin'],
   },
   {
-    title: 'UI/UX Design Systems',
-    desc: 'Crafting cohesive design languages, component libraries, and pixel-perfect interfaces that delight users.',
-    tags: ['Figma', 'Storybook', 'Tailwind'],
-    color: 'bg-purple-50 text-purple-600',
+    title: 'Digital Product Engineering & Architecture',
+    desc: 'Thoughtful architecture and end-to-end engineering for products made to last.',
+    tags: ['System Design', 'APIs', 'Cloud-Native'],
   },
   {
-    title: 'Cloud Infrastructure',
-    desc: 'Architecting resilient, auto-scaling cloud environments with CI/CD pipelines and infrastructure-as-code.',
+    title: 'Scalable Technology Solutions',
+    desc: 'Flexible technology foundations that perform today and grow with tomorrow.',
     tags: ['AWS', 'Docker', 'Terraform'],
-    color: 'bg-orange-50 text-orange-500',
   },
   {
-    title: 'AI & ML Integration',
-    desc: 'Embedding intelligent features into your product: recommendation engines, NLP pipelines, and predictive analytics.',
-    tags: ['Python', 'TensorFlow', 'OpenAI'],
-    color: 'bg-green-50 text-green-600',
-  },
-  {
-    title: 'Security & Compliance',
-    desc: 'Proactive security audits, penetration testing, and compliance frameworks for SOC 2, GDPR, and HIPAA.',
-    tags: ['OWASP', 'SOC2', 'GDPR'],
-    color: 'bg-red-50 text-red-500',
-  },
-  {
-    title: 'Tech Consulting',
-    desc: 'Strategic technology advisory: architecture reviews, team augmentation, and digital transformation roadmaps.',
-    tags: ['Strategy', 'Audit', 'Roadmap'],
-    color: 'bg-indigo-50 text-indigo-600',
+    title: 'Reliable, Client-Centric Delivery',
+    desc: 'Clear communication, disciplined execution, and outcomes centered on your goals.',
+    tags: ['Agile', 'Sprint Delivery', 'QA'],
   },
 ];
 
