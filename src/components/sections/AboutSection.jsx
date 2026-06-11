@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ABOUT_VALUES, CAPABILITY_DETAILS } from '../../assets';
@@ -18,18 +18,7 @@ export default function AboutSection() {
     const rightRef = useRef(null);
     const cardsRef = useRef(null);
 
-    // Track which card's modal is open (by title, or null)
-    const [openCard, setOpenCard] = useState(null);
 
-    // Lock body scroll while a modal is open
-    useEffect(() => {
-        if (openCard) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => { document.body.style.overflow = ''; };
-    }, [openCard]);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -159,9 +148,6 @@ export default function AboutSection() {
                                 emoji={emoji}
                                 title={title}
                                 desc={desc}
-                                isOpen={openCard === title}
-                                onOpen={() => setOpenCard(title)}
-                                onClose={() => setOpenCard(null)}
                             />
                         ))}
                     </div>
