@@ -1,7 +1,7 @@
 // ── Brand ────────────────────────────────────────────────────────────────────
 export const BRAND = {
   name: 'technocratblues',
-  nameColored: { base: 'technocrat', accent: 'blues' },
+  nameColored: { base: 'Technocrat', accent: 'blues' },
   tagline: 'Engineering & Technology Consulting',
   company: 'Technocrat Blues Pvt Ltd',
   founder: { name: 'Swati Goel', title: 'Founder & CEO' },

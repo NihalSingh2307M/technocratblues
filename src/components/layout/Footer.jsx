@@ -11,7 +11,7 @@ export default function Footer() {
             onClick={() => document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' })}
             className="flex items-center gap-2.5 cursor-pointer"
           >
-            <span className="font-black text-white text-base tracking-tight font-display">
+            <span className="font-bold text-white text-xl tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
               {BRAND.nameColored.base}<span className="text-brand">{BRAND.nameColored.accent}</span>
             </span>
           </button>
