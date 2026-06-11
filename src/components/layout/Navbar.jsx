@@ -5,10 +5,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 const LINKS = [
     { label: 'Home',     href: '#home'     },
-    { label: 'Services', href: '#services'  },
     { label: 'About',    href: '#about'    },
     { label: 'Clients',  href: '#clients'  },
-    { label: 'Process',  href: '#process'  },
 ];
 
 function scrollTo(href) {

@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ABOUT_VALUES } from '../../assets';
+import CapabilityCard from './CapabilityCard';
 gsap.registerPlugin(ScrollTrigger);
 
 const WHAT_WE_OFFER = [
@@ -16,6 +17,19 @@ export default function AboutSection() {
     const leftRef = useRef(null);
     const rightRef = useRef(null);
     const cardsRef = useRef(null);
+
+    // Track which card's modal is open (by title, or null)
+    const [openCard, setOpenCard] = useState(null);
+
+    // Lock body scroll while a modal is open
+    useEffect(() => {
+        if (openCard) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [openCard]);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -125,9 +139,6 @@ export default function AboutSection() {
                                 ))}
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
 
@@ -143,24 +154,15 @@ export default function AboutSection() {
 
                     <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         {WHAT_WE_OFFER.map(({ emoji, title, desc }) => (
-                            <div
+                            <CapabilityCard
                                 key={title}
-                                className="group rounded-3xl p-8 border border-[color:var(--color-border-medium)]
-                           bg-white/70 backdrop-blur-sm
-                           hover:border-brand/30 hover:shadow-xl hover:-translate-y-1
-                           transition-all duration-300 cursor-default"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(240,243,255,0.85) 0%, rgba(255,255,255,0.95) 100%)',
-                                }}
-                            >
-                                <div className="w-14 h-14 rounded-2xl bg-white/80 shadow-md flex items-center justify-center text-2xl mb-6 border border-white/60">
-                                    {emoji}
-                                </div>
-                                <h4 className="font-display text-xl font-black text-[color:var(--color-ink)] mb-3 group-hover:text-brand transition-colors">
-                                    {title}
-                                </h4>
-                                <p className="text-sm text-[color:var(--color-ink-subtle)] leading-relaxed">{desc}</p>
-                            </div>
+                                emoji={emoji}
+                                title={title}
+                                desc={desc}
+                                isOpen={openCard === title}
+                                onOpen={() => setOpenCard(title)}
+                                onClose={() => setOpenCard(null)}
+                            />
                         ))}
                     </div>
                 </div>

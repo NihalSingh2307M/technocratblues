@@ -1,45 +1,132 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { HERO_HEADLINE, HERO_STATS, LOGO } from '../../assets';
+import { HERO_HEADLINE, LOGO } from '../../assets';
+
 gsap.registerPlugin(ScrollTrigger);
 
-// Words that cycle on line 3 — all relevant to a tech startup
-const CYCLING_WORDS = [
-  'forward.',
-  'faster.',
-  'smarter.',
-  'at scale.',
-  'with clarity.',
-  'that lasts.',
+const CYCLING_WORDS = ['forward.', 'faster.', 'smarter.', 'at scale.', 'with clarity.', 'that lasts.'];
+
+const STAT_CONFIG = [
+  {
+    value: 'Scalable', label: 'by design',
+    renderIcon: () => (
+      <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
+      </svg>
+    ),
+    color: '#7078D0', glow: 'rgba(112,120,208,0.18)', bar: 0.92,
+  },
+  {
+    value: 'Reliable', label: 'by default',
+    renderIcon: () => (
+      <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    ),
+    color: '#5B8DEF', glow: 'rgba(91,141,239,0.18)', bar: 0.98,
+  },
+  {
+    value: 'Client-first', label: 'at every step',
+    renderIcon: () => (
+      <svg viewBox="0 0 24 24" fill="none" style={{ width: 20, height: 20 }} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+    color: '#F59E0B', glow: 'rgba(245,158,11,0.18)', bar: 1.0,
+  },
 ];
 
-function scrollToSection(id) {
-  ScrollTrigger.refresh();
-  const el = document.getElementById(id);
-  if (!el) return;
-  const pinSpacer =
-    el.closest('[data-scrolltrigger-pin-spacer]') ??
-    el.parentElement?.closest('[data-scrolltrigger-pin-spacer]');
-  const target = pinSpacer ?? el;
-  const top = target.getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({ top, behavior: pinSpacer ? 'instant' : 'smooth' });
-}
-
-export default function Hero() {
-  const line1Ref   = useRef(null);
-  const line2Ref   = useRef(null);
-  const line3Ref   = useRef(null); // wrapper that clips
-  const wordRef    = useRef(null); // the animating word span
-  const paraRef    = useRef(null);
-  const rightRef   = useRef(null);
-  const tagRef     = useRef(null);
-  const indexRef   = useRef(0);    // current word index (mutable, no re-render)
+function StatsStrip() {
+  const stripRef = useRef(null);
+  const cardsRef = useRef([]);
+  const barsRef  = useRef([]);
+  const glowsRef = useRef([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const trigger = { trigger: stripRef.current, start: 'top 95%' };
 
-      /* ── Entry animation ── */
+      gsap.fromTo(stripRef.current,
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', scrollTrigger: trigger }
+      );
+
+      gsap.fromTo(cardsRef.current,
+        { rotateX: -40, y: 30, opacity: 0, transformPerspective: 800 },
+        { rotateX: 0, y: 0, opacity: 1, duration: 0.7, ease: 'back.out(1.6)', stagger: 0.13, scrollTrigger: trigger }
+      );
+
+      barsRef.current.forEach((bar, i) => {
+        gsap.fromTo(bar,
+          { scaleX: 0, transformOrigin: 'left center' },
+          { scaleX: 1, duration: 1.1, ease: 'power2.out', delay: 0.6 + i * 0.13, scrollTrigger: trigger }
+        );
+      });
+
+      glowsRef.current.forEach((glow, i) => {
+        gsap.to(glow, { opacity: 0.55, scale: 1.15, duration: 1.8, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: i * 0.55 });
+      });
+
+      cardsRef.current.forEach((card, i) => {
+        const glow = glowsRef.current[i];
+        card.addEventListener('mouseenter', () => {
+          gsap.to(card, { y: -6, scale: 1.03, duration: 0.3, ease: 'power2.out' });
+          gsap.to(glow, { opacity: 0.9, scale: 1.4, duration: 0.3, ease: 'power2.out' });
+        });
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, { y: 0, scale: 1, duration: 0.4, ease: 'elastic.out(1, 0.6)' });
+          gsap.to(glow, { opacity: 0.3, scale: 1, duration: 0.4, ease: 'power2.out' });
+        });
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={stripRef} style={{ opacity: 0 }} className="w-full border-t border-[#e8eaf0]/60 bg-white/40 backdrop-blur-sm">
+      <div className="container-custom py-5 flex items-stretch gap-3 sm:gap-4">
+        {STAT_CONFIG.map(({ value, label, renderIcon, color, glow, bar }, i) => (
+          <div
+            key={value}
+            ref={el => { cardsRef.current[i] = el; }}
+            className="relative flex-1 rounded-2xl px-4 py-3.5 overflow-hidden cursor-default"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,255,0.95) 100%)',
+              border: `1px solid ${color}22`,
+              boxShadow: `0 2px 12px ${color}0f`,
+              willChange: 'transform',
+            }}
+          >
+            <div ref={el => { glowsRef.current[i] = el; }} className="absolute -top-4 -right-4 w-16 h-16 rounded-full blur-xl pointer-events-none" style={{ background: glow, opacity: 0.3 }} />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-2.5" style={{ background: `${color}15`, color }}>
+              {renderIcon()}
+            </div>
+            <p className="font-display text-sm font-black leading-tight" style={{ color: '#111' }}>{value}</p>
+            <p className="text-[11px] mt-0.5" style={{ color: '#888' }}>{label}</p>
+            <div className="mt-3 h-0.5 rounded-full overflow-hidden" style={{ background: `${color}18` }}>
+              <div ref={el => { barsRef.current[i] = el; }} className="h-full rounded-full" style={{ width: `${bar * 100}%`, background: `linear-gradient(90deg, ${color}88, ${color})`, transformOrigin: 'left center' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Hero() {
+  const line1Ref = useRef(null);
+  const line2Ref = useRef(null);
+  const line3Ref = useRef(null);
+  const wordRef  = useRef(null);
+  const paraRef  = useRef(null);
+  const rightRef = useRef(null);
+  const tagRef   = useRef(null);
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.3 });
       tl.fromTo(tagRef.current,   { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 });
       tl.fromTo(line1Ref.current, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, '-=0.2');
@@ -48,202 +135,97 @@ export default function Hero() {
       tl.fromTo(paraRef.current,  { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, '-=0.3');
       tl.fromTo(rightRef.current, { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.9, ease: 'power2.out' }, 0.5);
 
-      /* ── Floating card animations ── */
-      gsap.to('.hero-float',   { y: -10, duration: 3,   ease: 'sine.inOut', repeat: -1, yoyo: true });
-      gsap.to('.hero-float-2', { y: -7,  duration: 2.4, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 0.6 });
+      gsap.to('.hero-float', { y: -10, duration: 3, ease: 'sine.inOut', repeat: -1, yoyo: true });
 
-      /* ── Word cycling (starts after entry tl finishes) ── */
-      // slide out current word upward, swap text, slide in from below
       const cycleWord = () => {
         const el = wordRef.current;
         if (!el) return;
-
         gsap.timeline()
-          // exit: slide up + fade out
-          .to(el, {
-            y: -36,
-            opacity: 0,
-            duration: 0.38,
-            ease: 'power2.in',
-          })
+          .to(el, { y: -36, opacity: 0, duration: 0.38, ease: 'power2.in' })
           .call(() => {
             indexRef.current = (indexRef.current + 1) % CYCLING_WORDS.length;
             el.textContent = CYCLING_WORDS[indexRef.current];
-            // reset below for entry
             gsap.set(el, { y: 36, opacity: 0 });
           })
-          // enter: slide up from below + fade in
-          .to(el, {
-            y: 0,
-            opacity: 1,
-            duration: 0.42,
-            ease: 'power3.out',
-          });
+          .to(el, { y: 0, opacity: 1, duration: 0.42, ease: 'power3.out' });
       };
 
-      // Kick off after entry animation completes (~2.2s) then every 2.4s
-      const startDelay = 2200;
-      const interval   = 2400;
       const timer = setTimeout(() => {
         cycleWord();
-        const id = setInterval(cycleWord, interval);
-        // store interval id on ref so cleanup can clear it
-        wordRef._intervalId = id;
-      }, startDelay);
+        wordRef._intervalId = setInterval(cycleWord, 2400);
+      }, 2200);
 
-      // cleanup
-      return () => {
-        clearTimeout(timer);
-        clearInterval(wordRef._intervalId);
-      };
+      return () => { clearTimeout(timer); clearInterval(wordRef._intervalId); };
     });
-
     return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      id="home"
-      className="relative min-h-screen flex items-center bg-surface overflow-hidden pt-20"
-    >
-      {/* ── Background decorations ── */}
+    <section id="home" className="relative min-h-screen flex flex-col bg-surface overflow-hidden pt-20">
       <div className="absolute inset-0 pointer-events-none select-none">
         <div className="absolute top-0 right-0 w-1/2 h-2/3 bg-linear-to-bl from-blue-50/80 to-transparent" />
-        <div
-          className="absolute bottom-0 left-0 w-2/5 h-1/2 opacity-50"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(112,120,208,0.08) 1px, transparent 1px)',
-            backgroundSize : '26px 26px',
-          }}
-        />
+        <div className="absolute bottom-0 left-0 w-2/5 h-1/2 opacity-50" style={{ backgroundImage: 'radial-gradient(circle, rgba(112,120,208,0.08) 1px, transparent 1px)', backgroundSize: '26px 26px' }} />
         <div className="absolute top-1/4 right-1/3 w-96 h-96 bg-blue-100/25 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-indigo-100/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative w-full container-custom py-12 sm:py-16 lg:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-12 xl:gap-16 items-center">
+      <div className="relative flex-1 flex items-center container-custom py-12 sm:py-16 lg:py-20">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-12 xl:gap-16 items-center">
 
-          {/* ── LEFT ── */}
           <div className="flex flex-col">
-
-            {/* Tag */}
-            <div
-              ref={tagRef}
-              style={{ opacity: 0 }}
-              className="inline-flex items-center gap-2.5 w-fit px-4 py-2 rounded-full
-                         bg-[color:var(--color-blue-50)] border border-[color:var(--color-blue-100)] mb-8"
-            >
+            <div ref={tagRef} style={{ opacity: 0 }} className="inline-flex items-center gap-2.5 w-fit px-4 py-2 rounded-full bg-[color:var(--color-blue-50)] border border-[color:var(--color-blue-100)] mb-8">
               <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
-              <span className="text-xs font-semibold text-brand tracking-wide">
-                Digital Product Engineering
-              </span>
+              <span className="text-xs font-semibold text-brand tracking-wide">Digital Product Engineering</span>
             </div>
 
-            {/* Headline */}
             <div className="mb-8">
-
-              {/* Line 1 */}
               <div className="overflow-hidden">
-                <h1
-                  ref={line1Ref}
-                  style={{ opacity: 0 }}
-                  className="font-display font-semibold text-(--color-ink)] leading-[1.115]
-                             text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]"
-                >
+                <h1 ref={line1Ref} style={{ opacity: 0 }} className="font-display font-semibold leading-[1.115] text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]">
                   {HERO_HEADLINE.line1}
                 </h1>
               </div>
-
-              {/* Line 2 */}
               <div className="overflow-hidden">
-                <h1
-                  ref={line2Ref}
-                  style={{ opacity: 0 }}
-                  className="font-display font-semibold text-(--color-ink) leading-[1.15]
-                             text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]"
-                >
+                <h1 ref={line2Ref} style={{ opacity: 0 }} className="font-display font-semibold leading-[1.15] text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]">
                   {HERO_HEADLINE.line2}
                 </h1>
               </div>
-
-              {/* Line 3 — cycling word, clipped container prevents overflow during slide */}
-              <div
-                className="overflow-hidden"
-                style={{ lineHeight: 1.25 }}
-              >
-                <h1
-                  ref={line3Ref}
-                  style={{ opacity: 0 }}
-                  className="font-display font-semibold text-brand leading-[1.15]
-                             text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]"
-                >
-                  {/* Extra overflow clip so cycling slide stays inside line bounds */}
-                  <span
-                    style={{ display: 'block', overflow: 'hidden', lineHeight: 'inherit' }}
-                  >
-                    <span ref={wordRef} style={{ display: 'inline-block' }}>
-                      {CYCLING_WORDS[0]}
-                    </span>
+              <div className="overflow-hidden" style={{ lineHeight: 1.25 }}>
+                <h1 ref={line3Ref} style={{ opacity: 0 }} className="font-display font-semibold text-brand leading-[1.15] text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] lg:text-[3.2rem] xl:text-[4rem] 2xl:text-[4.8rem]">
+                  <span style={{ display: 'block', overflow: 'hidden', lineHeight: 'inherit' }}>
+                    <span ref={wordRef} style={{ display: 'inline-block' }}>{CYCLING_WORDS[0]}</span>
                   </span>
                 </h1>
               </div>
-
             </div>
 
-            {/* Description + CTA */}
             <div ref={paraRef} style={{ opacity: 0 }} className="mb-8">
-              <p className="font-body text-(--color-ink-muted) text-base sm:text-lg leading-relaxed max-w-120">
+              <p className="font-body text-[color:var(--color-ink-muted)] text-base sm:text-lg leading-relaxed max-w-120">
                 {HERO_HEADLINE.description}
               </p>
-
-              <div className="flex flex-wrap items-center gap-4 mt-8">
-                <button
-                  onClick={() => scrollToSection('services')}
-                  className="inline-flex items-center gap-2 text-sm font-semibold
-                             text-(--color-ink-soft) hover:text-brand transition-colors font-body"
-                >
-                  Explore our expertise
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
+              <button
+                onClick={() => { const el = document.getElementById('services'); el?.scrollIntoView({ behavior: 'smooth' }); }}
+                className="inline-flex items-center gap-2 mt-8 text-sm font-semibold text-[color:var(--color-ink-soft)] hover:text-brand transition-colors font-body"
+              >
+                Explore our expertise
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
             </div>
           </div>
 
-          {/* ── RIGHT ── */}
-          <div
-            ref={rightRef}
-            style={{ opacity: 0 }}
-            className="flex items-center justify-center lg:justify-end"
-          >
+          <div ref={rightRef} style={{ opacity: 0 }} className="flex items-center justify-center lg:justify-end">
             <div className="relative w-full max-w-sm">
-              <div className="hero-float bg-surface-white rounded-3xl shadow-2xl border border-(--color-border-light) p-6 sm:p-8 flex items-center justify-center aspect-square">
+              <div className="hero-float bg-surface-white rounded-3xl shadow-2xl border border-[color:var(--color-border-light)] p-6 sm:p-8 flex items-center justify-center aspect-square">
                 <img src={LOGO.src} alt={LOGO.alt} className="w-full h-full object-contain" />
               </div>
-
-              {/* Floating code badge */}
-              <div className="absolute -top-5 right-4 bg-surface-card rounded-2xl shadow-xl px-4 py-3 z-10">
-                <p className="text-xs font-mono text-brand whitespace-nowrap">npm run deploy</p>
-                <p className="text-[10px] font-mono text-green-400 mt-1">✓ Build successful</p>
-              </div>
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* ── Stats strip ── */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-[#e8eaf0]/60">
-        <div className="container-custom py-4 flex items-center gap-8 sm:gap-12">
-          {HERO_STATS.map(({ value, label }) => (
-            <div key={value} className="flex flex-col">
-              <span className="font-display text-sm font-black text-(--color-ink)">{value}</span>
-              <span className="text-xs text-(--color-ink-ghost)">{label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <StatsStrip />
     </section>
   );
 }

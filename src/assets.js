@@ -58,22 +58,18 @@ export const SERVICES = [
   {
     title: 'Web & Mobile Application Development',
     desc: 'Modern, intuitive applications built for real users and evolving business needs.',
-    tags: ['React', 'Spring Boot', 'Swift', 'Kotlin'],
   },
   {
     title: 'Digital Product Engineering & Architecture',
     desc: 'Thoughtful architecture and end-to-end engineering for products made to last.',
-    tags: ['System Design', 'APIs', 'Cloud-Native'],
   },
   {
     title: 'Scalable Technology Solutions',
     desc: 'Flexible technology foundations that perform today and grow with tomorrow.',
-    tags: ['AWS', 'Docker', 'Terraform'],
   },
   {
     title: 'Reliable, Client-Centric Delivery',
     desc: 'Clear communication, disciplined execution, and outcomes centered on your goals.',
-    tags: ['Agile', 'Sprint Delivery', 'QA'],
   },
 ];
 
@@ -152,4 +148,51 @@ export const SOCIAL_LINKS = {
   twitter:  'https://twitter.com/technocratblues',
   // imp note :--> Dont uncomment email 
   // email:    'mailto:hello@technocratblues.com',
+};
+// ── Capability Card Details ───────────────────────────────────────────────────
+export const CAPABILITY_DETAILS = {
+  'Application Development': {
+    emoji: '📱',
+    tagline: 'We built Inji Web — a browser-based digital identity wallet.',
+    highlights: [
+      'React frontend with OpenID4VCI credential issuance',
+      'Secure credential storage and QR-based sharing',
+      "Contributed to MOSIP's open-source Inji stack",
+    ],
+    color: { from: '#7078D0', to: '#6B91FF' },
+    accentBg: 'rgba(112, 120, 208, 0.07)',
+  },
+  'Product Engineering': {
+    emoji: '⚙️',
+    tagline: 'Real standards, not shortcuts.',
+    highlights: [
+      'OpenID4VP & W3C Verifiable Credentials',
+      'Mimoto backend + Docker-based local infra',
+      'Feature branches, PRs, upstream-first workflow',
+    ],
+    color: { from: '#9B88F0', to: '#C4A8FF' },
+    accentBg: 'rgba(155, 136, 240, 0.07)',
+  },
+  'Scalable Tech': {
+    emoji: '📈',
+    tagline: 'Open-source infrastructure from day one.',
+    highlights: [
+      'MOSIP ecosystem — used by national ID programs',
+      'Dockerised services: PostgreSQL, MinIO, DataShare',
+      'Built to handle government-scale identity workloads',
+    ],
+    color: { from: '#5B8DEF', to: '#38BDF8' },
+    accentBg: 'rgba(91, 141, 239, 0.07)',
+  },
+  'Client-Centric': {
+    emoji: '🤝',
+    tagline: 'We work close to the problem.',
+    highlights: [
+      'Direct collaboration, no middlemen',
+      'Transparent progress, code you can audit',
+      'We are learning and building together',
+    ],
+    color: { from: '#F59E0B', to: '#FBBF24' },
+    accentBg: 'rgba(245, 158, 11, 0.07)',
+  },
 };
