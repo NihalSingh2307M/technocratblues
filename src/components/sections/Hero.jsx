@@ -15,7 +15,7 @@ const STAT_CONFIG = [
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
       </svg>
     ),
-    color: '#7078D0', glow: 'rgba(112,120,208,0.18)', bar: 0.92,
+    color: '#7078D0', glow: 'rgba(112,120,208,0.18)', bar: 1.0,
   },
   {
     value: 'Reliable', label: 'by default',
@@ -24,7 +24,7 @@ const STAT_CONFIG = [
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       </svg>
     ),
-    color: '#5B8DEF', glow: 'rgba(91,141,239,0.18)', bar: 0.98,
+    color: '#5B8DEF', glow: 'rgba(91,141,239,0.18)', bar: 1.0,
   },
   {
     value: 'Client-first', label: 'at every step',
@@ -61,7 +61,7 @@ function StatsStrip() {
       barsRef.current.forEach((bar, i) => {
         gsap.fromTo(bar,
           { scaleX: 0, transformOrigin: 'left center' },
-          { scaleX: 1, duration: 1.1, ease: 'power2.out', delay: 0.6 + i * 0.13, scrollTrigger: trigger }
+          { scaleX: STAT_CONFIG[i].bar, duration: 1.1, ease: 'power2.out', delay: 0.6 + i * 0.13, scrollTrigger: trigger }
         );
       });
 
@@ -87,7 +87,7 @@ function StatsStrip() {
   return (
     <div ref={stripRef} style={{ opacity: 0 }} className="w-full border-t border-[#e8eaf0]/60 bg-white/40 backdrop-blur-sm">
       <div className="container-custom py-5 flex items-stretch gap-3 sm:gap-4">
-        {STAT_CONFIG.map(({ value, label, renderIcon, color, glow, bar }, i) => (
+        {STAT_CONFIG.map(({ value, label, renderIcon, color, glow, }, i) => (
           <div
             key={value}
             ref={el => { cardsRef.current[i] = el; }}
@@ -106,7 +106,7 @@ function StatsStrip() {
             <p className="font-display text-sm font-black leading-tight" style={{ color: '#111' }}>{value}</p>
             <p className="text-[11px] mt-0.5" style={{ color: '#888' }}>{label}</p>
             <div className="mt-3 h-0.5 rounded-full overflow-hidden" style={{ background: `${color}18` }}>
-              <div ref={el => { barsRef.current[i] = el; }} className="h-full rounded-full" style={{ width: `${bar * 100}%`, background: `linear-gradient(90deg, ${color}88, ${color})`, transformOrigin: 'left center' }} />
+              <div ref={el => { barsRef.current[i] = el; }} className="h-full rounded-full" style={{ width: '100%', background: `linear-gradient(90deg, ${color}88, ${color})`, transformOrigin: 'left center', transform: 'scaleX(0)' }} />
             </div>
           </div>
         ))}
@@ -202,15 +202,7 @@ export default function Hero() {
               <p className="font-body text-[color:var(--color-ink-muted)] text-base sm:text-lg leading-relaxed max-w-120">
                 {HERO_HEADLINE.description}
               </p>
-              <button
-                onClick={() => { const el = document.getElementById('services'); el?.scrollIntoView({ behavior: 'smooth' }); }}
-                className="inline-flex items-center gap-2 mt-8 text-sm font-semibold text-[color:var(--color-ink-soft)] hover:text-brand transition-colors font-body"
-              >
-                Explore our expertise
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
+
             </div>
           </div>
 

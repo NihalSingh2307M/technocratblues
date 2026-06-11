@@ -19,15 +19,7 @@ export const LOGO = {
   src: logoImg,
   alt: 'Technocrat Blues',
 };
-// ── Colors ───────────────────────────────────────────────────────────────────
-export const COLORS = {
-  primary: '#1A47E8',
-  primaryHover: '#1338c4',
-  bg: '#FAFAF8',
-  dark: '#111111',
-};
 
-// ── Navigation ───────────────────────────────────────────────────────────────
 export const NAV_LINKS = [
   { label: 'Home',     to: '/' },
   { label: 'Services', to: '/services' },
@@ -37,14 +29,6 @@ export const NAV_LINKS = [
 ];
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
-export const HERO_STATS = [
-  { value: 'Scalable',      label: 'by design' },
-  { value: 'Reliable',      label: 'by default' },
-  { value: 'Client-first',  label: 'at every step' },
-];
-
-export const HERO_BADGES = ['React', 'Node.js', 'Cloud', 'AI/ML', 'DevOps'];
-
 export const HERO_HEADLINE = {
   line1: 'Technology that',
   line2: 'moves business',
@@ -108,17 +92,6 @@ export const PROCESS_STEPS = [
 ];
 
 // ── About ─────────────────────────────────────────────────────────────────────
-export const ABOUT_BULLETS = [
-  'Modern Web & Mobile Application Development',
-  'Digital Product Engineering & Architecture',
-  'Scalable Technology Solutions',
-  'Reliable Delivery with Client-Centric Approach',
-  'Delivering scalable technology consulting services',
-  'Transforming ideas into robust digital solutions',
-  'Focus on software engineering, product architecture',
-  'Driven by motivation and commitment',
-];
-
 export const ABOUT_VALUES = [
   { label: 'Innovation',   desc: 'Modern stacks and forward-thinking architecture.' },
   { label: 'Reliability',  desc: 'Consistent delivery with zero compromise on quality.' },
