@@ -84,20 +84,38 @@ export default function Navbar() {
 
     /* ── Active section tracking ── */
     useEffect(() => {
-        const sections = LINKS.map(l => document.getElementById(l.href.replace('#', ''))).filter(Boolean);
-        if (!sections.length) return;
+        const NAV_HEIGHT = 80;       // navbar height in px
+        const BUFFER     = 40;       // extra px — prevents early activation of short/nested sections
+        const TRIGGER    = NAV_HEIGHT + BUFFER;
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) setActiveSection(entry.target.id);
-                });
-            },
-            { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
-        );
+        const getActiveId = () => {
+            const sections = LINKS
+                .map(l => document.getElementById(l.href.replace('#', '')))
+                .filter(Boolean);
 
-        sections.forEach(s => observer.observe(s));
-        return () => observer.disconnect();
+            const scrollY = window.scrollY + TRIGGER;
+
+            // Walk bottom→top; first section whose top is above the trigger wins
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const top = sections[i].getBoundingClientRect().top + window.scrollY;
+                if (scrollY >= top) return sections[i].id;
+            }
+            return sections[0]?.id ?? 'home';
+        };
+
+        let ticking = false;
+        const onScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                setActiveSection(getActiveId());
+                ticking = false;
+            });
+        };
+
+        setActiveSection(getActiveId()); // set immediately on mount
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
     return (

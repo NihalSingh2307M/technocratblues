@@ -1,22 +1,13 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ABOUT_VALUES, CAPABILITY_DETAILS } from '../../assets';
-import CapabilityCard from './CapabilityCard';
+import { ABOUT_VALUES } from '../../assets';
 gsap.registerPlugin(ScrollTrigger);
-
-// Derived from CAPABILITY_DETAILS — single source of truth, no duplication
-const WHAT_WE_OFFER = Object.entries(CAPABILITY_DETAILS).map(([title, { emoji, tagline }]) => ({
-    title,
-    emoji,
-    desc: tagline,
-}));
 
 export default function AboutSection() {
     const sectionRef = useRef(null);
     const leftRef = useRef(null);
     const rightRef = useRef(null);
-    const cardsRef = useRef(null);
 
 
 
@@ -34,14 +25,6 @@ export default function AboutSection() {
                 {
                     x: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
                     scrollTrigger: { trigger: rightRef.current, start: 'top 80%' }
-                }
-            );
-            gsap.fromTo(
-                cardsRef.current?.children ? Array.from(cardsRef.current.children) : [],
-                { y: 40, opacity: 0 },
-                {
-                    y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', stagger: 0.12,
-                    scrollTrigger: { trigger: cardsRef.current, start: 'top 82%' }
                 }
             );
         }, sectionRef);
@@ -75,9 +58,8 @@ export default function AboutSection() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
                             <p className="text-sm text-[color:var(--color-ink-soft)] leading-relaxed">
-                                We are a product-focused tech startup turning ambitious ideas
-                                into software people actually use. From architecture to deployment,
-                                we own the full stack.
+                                We are a tech startup dedicated to building software that solves real-world problems. 
+                                From architecture to deployment, we handle every layer of the stack.
                             </p>
                             <p className="text-sm text-[color:var(--color-ink-soft)] leading-relaxed">
                                 We ship fast, iterate with purpose, and stay close to every
@@ -128,28 +110,6 @@ export default function AboutSection() {
                                 ))}
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                {/* ── What We Offer ── */}
-                <div id="services" className="mt-20">
-                    <div className="flex items-center gap-2.5 mb-2">
-                        <span className="w-2 h-2 rounded-full bg-brand" />
-                        <p className="text-xs font-semibold text-brand tracking-widest uppercase">What We Offer</p>
-                    </div>
-                    <h3 className="font-display text-2xl sm:text-3xl font-black text-[color:var(--color-ink)] mb-10">
-                        Our Core Capabilities
-                    </h3>
-
-                    <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        {WHAT_WE_OFFER.map(({ emoji, title, desc }) => (
-                            <CapabilityCard
-                                key={title}
-                                emoji={emoji}
-                                title={title}
-                                desc={desc}
-                            />
-                        ))}
                     </div>
                 </div>
 
