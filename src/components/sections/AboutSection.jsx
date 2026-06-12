@@ -132,7 +132,7 @@ export default function AboutSection() {
                 </div>
 
                 {/* ── What We Offer ── */}
-                <div className="mt-20">
+                <div id="services" className="mt-20">
                     <div className="flex items-center gap-2.5 mb-2">
                         <span className="w-2 h-2 rounded-full bg-brand" />
                         <p className="text-xs font-semibold text-brand tracking-widest uppercase">What We Offer</p>
