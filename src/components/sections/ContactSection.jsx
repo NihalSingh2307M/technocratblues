@@ -5,6 +5,7 @@ import ContactBackdrop from '../contact/ContactBackdrop';
 import FlightPathArt from '../contact/FlightPathArt';
 import EnvelopeArt from '../contact/EnvelopeArt';
 import EmailCard from '../contact/EmailCard';
+import ContactHighlights from '../contact/ContactHighlights';
 
 export default function ContactSection() {
     const sectionRef = useRef(null);
@@ -46,6 +47,7 @@ export default function ContactSection() {
                         <p className="section-subtitle mb-6">
                             {CONTACT_HEADLINE.description}
                         </p>
+                        <ContactHighlights />
 
                     </div>
 
