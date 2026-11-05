@@ -2,7 +2,6 @@ import { useMemo, useRef } from 'react';
 import { CONTACT_HEADLINE, CONTACT_EMAIL } from '../../assets';
 import { useSlideIn } from '../../hooks/useSlideIn';
 import ContactBackdrop from '../contact/ContactBackdrop';
-import FlightPathArt from '../contact/FlightPathArt';
 import EnvelopeArt from '../contact/EnvelopeArt';
 import EmailCard from '../contact/EmailCard';
 import ContactHighlights from '../contact/ContactHighlights';
@@ -25,7 +24,6 @@ export default function ContactSection() {
             style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f7f6ff 100%)' }}
         >
             <ContactBackdrop />
-            <FlightPathArt />
 
             <div className="container-custom relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-16 xl:gap-24 items-center">
