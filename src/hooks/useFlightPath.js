@@ -5,9 +5,8 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { prefersReducedMotion } from './prefersReducedMotion';
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
-// `trailRef` is the visible dotted trail and doubles as the plane's flight path.
 export function useFlightPath(
-    { triggerRef, trailRef, trailMaskRef, planeRef },
+    { triggerRef, routeRef, maskRefs, planeRef },
     { finalAngle = 0, duration = 3.6, start = 'top 70%', ease = 'sine.inOut' } = {}
 ) {
     useEffect(() => {
@@ -18,29 +17,36 @@ export function useFlightPath(
                 scrollTrigger: reduce ? undefined : { trigger: triggerRef.current, start },
             });
 
-            // Plane and trail mask share path, duration and ease, so the dots are drawn right behind
-            // the plane as it flies and the plane settles on top of the end of the trail.
+            const masks = maskRefs.current.filter(Boolean);
+            const lengths = masks.map((m) => m.getTotalLength());
+            const total = lengths.reduce((sum, l) => sum + l, 0);
+            const starts = lengths.map((_, i) => lengths.slice(0, i).reduce((sum, l) => sum + l, 0));
+            const reveal = (progress) => {
+                const flown = progress * total;
+                masks.forEach((m, i) => {
+                    const done = Math.min(Math.max((flown - starts[i]) / lengths[i], 0), 1);
+                    m.setAttribute('stroke-dashoffset', String(1 - done));
+                });
+            };
+            reveal(0);
+
+            const progress = { value: 0 };
             tl.to(planeRef.current, { opacity: 1, duration: 0.3 }, 0)
                 .to(planeRef.current, {
                     motionPath: {
-                        path: trailRef.current,
-                        align: trailRef.current,
+                        path: routeRef.current,
+                        align: routeRef.current,
                         alignOrigin: [0.5, 0.5],
                         autoRotate: true,
                     },
                     duration,
                     ease,
                 }, 0)
-                .fromTo(trailMaskRef.current,
-                    { attr: { 'stroke-dashoffset': 1 } },
-                    { attr: { 'stroke-dashoffset': 0 }, duration, ease },
-                    0
-                )
-                // '_short' takes the shortest turn to the exact parked heading (a few degrees at most).
+                .to(progress, { value: 1, duration, ease, onUpdate: () => reveal(progress.value) }, 0)
                 .to(planeRef.current, { rotation: `${finalAngle}_short`, duration: 0.4, ease: 'sine.out' }, duration);
 
             if (reduce) tl.progress(1);
         }, triggerRef);
         return () => ctx.revert();
-    }, [triggerRef, trailRef, trailMaskRef, planeRef, finalAngle, duration, start, ease]);
+    }, [triggerRef, routeRef, maskRefs, planeRef, finalAngle, duration, start, ease]);
 }

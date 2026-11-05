@@ -1,21 +1,18 @@
 import { useId, useRef } from 'react';
 import { useFlightPath } from '../../hooks/useFlightPath';
 import {
-    ART_VIEWBOX, ACCENT_COLOR, PLANE_FINAL_ANGLE, FLIGHT_ROUTE, FLIGHT_DURATION,
+    ART_VIEWBOX, ACCENT_COLOR, PLANE_FINAL_ANGLE, FLIGHT_ROUTE, FLIGHT_ROUTE_PIECES, FLIGHT_DURATION,
 } from './contactArtConfig';
 
-// 'slice' crops instead of squashing on narrow screens, so the art tracks the section's
-// edges rather than the card. YMin pins the top edge: the section's height varies, and a centred
-// crop would cut the loop off on wide screens.
 export default function FlightPathArt() {
     const uid = useId().replace(/:/g, '');
     const svgRef = useRef(null);
-    const trailRef = useRef(null);
-    const trailMaskRef = useRef(null);
+    const routeRef = useRef(null);
+    const maskRefs = useRef([]);
     const planeRef = useRef(null);
 
     useFlightPath(
-        { triggerRef: svgRef, trailRef, trailMaskRef, planeRef },
+        { triggerRef: svgRef, routeRef, maskRefs, planeRef },
         { finalAngle: PLANE_FINAL_ANGLE, duration: FLIGHT_DURATION }
     );
 
@@ -31,24 +28,33 @@ export default function FlightPathArt() {
                 <filter id={`${uid}-plane-shadow`} x="-40%" y="-40%" width="180%" height="200%">
                     <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#4f46e5" floodOpacity="0.35" />
                 </filter>
-                {/* Round, wide cap so the end of the trail isn't clipped */}
-                <mask id={`${uid}-trail-reveal`} maskUnits="userSpaceOnUse" x="0" y="0" width="1254" height="706">
-                    <path
-                        ref={trailMaskRef}
-                        d={FLIGHT_ROUTE}
-                        pathLength="1"
-                        fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="round"
-                        strokeDasharray="1 1" strokeDashoffset="1"
-                    />
-                </mask>
+                {FLIGHT_ROUTE_PIECES.map((d, i) => (
+                    <mask
+                        key={i}
+                        id={`${uid}-trail-reveal-${i}`}
+                        maskUnits="userSpaceOnUse" x="-200" y="0" width="1654" height="706"
+                    >
+                        <path
+                            ref={(el) => { maskRefs.current[i] = el; }}
+                            d={d}
+                            pathLength="1"
+                            fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="round"
+                            strokeDasharray="1 2" strokeDashoffset="1"
+                        />
+                    </mask>
+                ))}
             </defs>
 
-            <path
-                ref={trailRef}
-                d={FLIGHT_ROUTE}
-                fill="none" stroke={ACCENT_COLOR} strokeWidth="1.6" strokeDasharray="6 6"
-                mask={`url(#${uid}-trail-reveal)`}
-            />
+            <path ref={routeRef} d={FLIGHT_ROUTE} fill="none" stroke="none" />
+
+            {FLIGHT_ROUTE_PIECES.map((d, i) => (
+                <path
+                    key={i}
+                    d={d}
+                    fill="none" stroke={ACCENT_COLOR} strokeWidth="1.6" strokeDasharray="6 6"
+                    mask={`url(#${uid}-trail-reveal-${i})`}
+                />
+            ))}
 
             <g ref={planeRef} style={{ opacity: 0 }}>
                 <g transform="scale(1.6)" filter={`url(#${uid}-plane-shadow)`}>

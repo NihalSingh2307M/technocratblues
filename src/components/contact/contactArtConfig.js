@@ -1,16 +1,9 @@
-// Coordinates were measured off the 1254x706 reference design, so every x/y below
-// only lines up inside this viewBox.
 export const ART_VIEWBOX = '0 0 1254 706';
 
 export const ACCENT_COLOR = '#5b5ff0';
 
-// The plane's path, drawn as the dotted trail with the plane on top of its end. It enters from off the left
-// edge (negative x, so 'slice' cropping never reveals the start), loops once clockwise and glides to the
-// parking spot beside the card.
-// The art is pinned to the top of the section (see FlightPathArt), so the whole route lives in y 25..125:
-// that band is above the headline block at every width, and the trail never runs through the text.
-export const FLIGHT_ROUTE = [
-    'M -90 52',
+const ROUTE_START = '-90 52';
+const ROUTE_CURVES = [
     'C -60 51.7 -32.2 51.3 0 51',
     'C 37.1 50.6 80 50.3 120 50',
     'C 160 49.7 202.9 49.2 240 49',
@@ -37,9 +30,22 @@ export const FLIGHT_ROUTE = [
     'C 1019 77.4 1045.7 89 1070 92',
     'C 1089.9 94.4 1108.6 96.2 1125 92',
     'C 1139.9 88.2 1151.7 77.3 1165 70',
-].join(' ');
+];
+const ROUTE_SPLITS = [16];
 
-// Heading is in degrees with 0 pointing right, because the plane artwork is drawn along +x.
+export const FLIGHT_ROUTE = [`M ${ROUTE_START}`, ...ROUTE_CURVES].join(' ');
+
+export const FLIGHT_ROUTE_PIECES = (() => {
+    const bounds = [0, ...ROUTE_SPLITS, ROUTE_CURVES.length];
+    return bounds.slice(0, -1).map((from, n) => {
+        const curves = ROUTE_CURVES.slice(from, bounds[n + 1]);
+        const startPoint = from === 0
+            ? ROUTE_START
+            : ROUTE_CURVES[from - 1].trim().split(/\s+/).slice(-2).join(' ');
+        return `M ${startPoint} ${curves.join(' ')}`;
+    });
+})();
+
 export const PLANE_FINAL_ANGLE = -30;
 
 export const FLIGHT_DURATION = 5;

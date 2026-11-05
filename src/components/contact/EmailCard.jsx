@@ -1,7 +1,6 @@
 import { MailIcon, ArrowRightIcon } from './icons';
 
-// A missing mailto renders the CTA as a disabled span, so an unset env var
-// never ships a dead link.
+// A missing mailto renders the CTA as a disabled span
 export default function EmailCard({ title, description, ctaLabel, mailto }) {
     return (
         <div

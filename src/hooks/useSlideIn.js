@@ -4,8 +4,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from './prefersReducedMotion';
 gsap.registerPlugin(ScrollTrigger);
 
-// Same entrance as AboutSection (x offset + fade, 0.8s power3.out, triggered at 'top 80%'), so sections
-// reveal alike. Each item is { ref, x }: a negative x slides in from the left, a positive one from the right.
 export function useSlideIn(scopeRef, items, { duration = 0.8, start = 'top 80%' } = {}) {
     useEffect(() => {
         if (prefersReducedMotion()) return;
